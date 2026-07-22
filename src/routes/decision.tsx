@@ -65,30 +65,25 @@ function DecisionPage() {
   return (
     <div style={{ background: C.bg, minHeight: "100vh", color: C.text, padding: "1rem" }}>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        <style>{`
+          .eb-dec-2col{ display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:1rem; }
+          .eb-dec-2eq{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:1rem; margin-top:1rem; }
+          .eb-dec-side{ display:flex; flex-direction:column; gap:1rem; }
+          @media (max-width:960px){
+            .eb-dec-2col, .eb-dec-2eq{ grid-template-columns:1fr !important; }
+          }
+        `}</style>
         <Header snap={data} />
         <SummaryCards snap={data} />
         <CapabilitySummary snap={data} />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)",
-            gap: "1rem",
-          }}
-        >
+        <div className="eb-dec-2col">
           <DecisionMatrix decision={data.decision} capabilities={data.capabilities} />
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div className="eb-dec-side">
             <ConfidenceGauge decision={data.decision} />
             <RiskMeter decision={data.decision} />
           </div>
         </div>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
-            gap: "1rem",
-            marginTop: "1rem",
-          }}
-        >
+        <div className="eb-dec-2eq">
           <Checklist decision={data.decision} />
           <EvidencePanel decision={data.decision} />
         </div>
