@@ -347,7 +347,8 @@ function DecisionMatrix({
       }}
     >
       <SectionTitle>Decision Matrix</SectionTitle>
-      <table style={{ width: "100%", fontSize: "0.85rem", borderCollapse: "collapse" }}>
+      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+      <table style={{ width: "100%", fontSize: "0.85rem", borderCollapse: "collapse", minWidth: 560 }}>
         <thead>
           <tr style={{ color: C.muted, textAlign: "left" }}>
             <th style={th}>Module</th>
@@ -385,6 +386,7 @@ function DecisionMatrix({
           })}
         </tbody>
       </table>
+      </div>
       {decision.conflicts.length > 0 && (
         <div style={{ marginTop: "0.6rem", fontSize: "0.8rem", color: C.red }}>
           Conflicts: {decision.conflicts.map((c) => c.reason).join(" · ")}
