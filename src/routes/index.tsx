@@ -387,6 +387,11 @@ function Dashboard() {
         @media(max-width:820px){
           .eb-grid{grid-template-columns:1fr !important;}
         }
+        /* Phase 46C · tablet range collapses two-rail dashboard */
+        @media(max-width:1023px){
+          [data-eb-dashboard-root]{grid-template-columns:1fr !important;}
+        }
+        [data-eb-dashboard-root] > *{min-width:0;}
         /* The sticky mobile top bar already shows the brand, so hide the
            duplicate wordmark in the page header on phones/tablets. */
         @media(max-width:860px){
