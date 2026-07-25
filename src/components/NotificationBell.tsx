@@ -8,6 +8,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { Bell, CheckCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   getNotificationUnreadCount,
   listNotifications,
@@ -34,7 +35,22 @@ export function NotificationBell() {
   const readOneFn = useServerFn(markNotificationRead);
   const readAllFn = useServerFn(markAllNotificationsRead);
   const [open, setOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) setSignedIn(!!data.session);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setSignedIn(!!session);
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
 
   const { data: countData } = useQuery({
     queryKey: ["notifications", "unread-count"],
@@ -42,11 +58,12 @@ export function NotificationBell() {
     staleTime: 30_000,
     refetchInterval: 60_000,
     retry: false,
+    enabled: signedIn,
   });
   const preview = useQuery({
     queryKey: ["notifications", "preview"],
     queryFn: () => listFn({ data: { limit: 6, unreadOnly: true } }),
-    enabled: open,
+    enabled: open && signedIn,
     staleTime: 15_000,
   });
 
@@ -60,6 +77,8 @@ export function NotificationBell() {
   });
 
   const count = countData?.count ?? 0;
+
+  if (!signedIn) return null;
 
   useEffect(() => {
     if (!open) return;
