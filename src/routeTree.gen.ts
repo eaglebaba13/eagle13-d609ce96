@@ -23,6 +23,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MarketReplayRouteImport } from './routes/market-replay'
 import { Route as MarketBreadthRouteImport } from './routes/market-breadth'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LiveTerminalRouteImport } from './routes/live-terminal'
 import { Route as LiveMarketTerminalRouteImport } from './routes/live-market-terminal'
 import { Route as LiveLevelsRouteImport } from './routes/live-levels'
@@ -155,6 +156,11 @@ const MarketReplayRoute = MarketReplayRouteImport.update({
 const MarketBreadthRoute = MarketBreadthRouteImport.update({
   id: '/market-breadth',
   path: '/market-breadth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LiveTerminalRoute = LiveTerminalRouteImport.update({
@@ -526,6 +532,7 @@ export interface FileRoutesByFullPath {
   '/live-levels': typeof LiveLevelsRoute
   '/live-market-terminal': typeof LiveMarketTerminalRoute
   '/live-terminal': typeof LiveTerminalRoute
+  '/login': typeof LoginRoute
   '/market-breadth': typeof MarketBreadthRoute
   '/market-replay': typeof MarketReplayRoute
   '/mcp': typeof McpRoute
@@ -604,6 +611,7 @@ export interface FileRoutesByTo {
   '/live-levels': typeof LiveLevelsRoute
   '/live-market-terminal': typeof LiveMarketTerminalRoute
   '/live-terminal': typeof LiveTerminalRoute
+  '/login': typeof LoginRoute
   '/market-breadth': typeof MarketBreadthRoute
   '/market-replay': typeof MarketReplayRoute
   '/mcp': typeof McpRoute
@@ -684,6 +692,7 @@ export interface FileRoutesById {
   '/live-levels': typeof LiveLevelsRoute
   '/live-market-terminal': typeof LiveMarketTerminalRoute
   '/live-terminal': typeof LiveTerminalRoute
+  '/login': typeof LoginRoute
   '/market-breadth': typeof MarketBreadthRoute
   '/market-replay': typeof MarketReplayRoute
   '/mcp': typeof McpRoute
@@ -764,6 +773,7 @@ export interface FileRouteTypes {
     | '/live-levels'
     | '/live-market-terminal'
     | '/live-terminal'
+    | '/login'
     | '/market-breadth'
     | '/market-replay'
     | '/mcp'
@@ -842,6 +852,7 @@ export interface FileRouteTypes {
     | '/live-levels'
     | '/live-market-terminal'
     | '/live-terminal'
+    | '/login'
     | '/market-breadth'
     | '/market-replay'
     | '/mcp'
@@ -921,6 +932,7 @@ export interface FileRouteTypes {
     | '/live-levels'
     | '/live-market-terminal'
     | '/live-terminal'
+    | '/login'
     | '/market-breadth'
     | '/market-replay'
     | '/mcp'
@@ -1001,6 +1013,7 @@ export interface RootRouteChildren {
   LiveLevelsRoute: typeof LiveLevelsRoute
   LiveMarketTerminalRoute: typeof LiveMarketTerminalRoute
   LiveTerminalRoute: typeof LiveTerminalRoute
+  LoginRoute: typeof LoginRoute
   MarketBreadthRoute: typeof MarketBreadthRoute
   MarketReplayRoute: typeof MarketReplayRoute
   McpRoute: typeof McpRoute
@@ -1123,6 +1136,13 @@ declare module '@tanstack/react-router' {
       path: '/market-breadth'
       fullPath: '/market-breadth'
       preLoaderRoute: typeof MarketBreadthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/live-terminal': {
@@ -1715,6 +1735,7 @@ const rootRouteChildren: RootRouteChildren = {
   LiveLevelsRoute: LiveLevelsRoute,
   LiveMarketTerminalRoute: LiveMarketTerminalRoute,
   LiveTerminalRoute: LiveTerminalRoute,
+  LoginRoute: LoginRoute,
   MarketBreadthRoute: MarketBreadthRoute,
   MarketReplayRoute: MarketReplayRoute,
   McpRoute: McpRoute,
