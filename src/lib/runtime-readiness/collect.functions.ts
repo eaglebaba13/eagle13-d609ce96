@@ -5,7 +5,6 @@
 // consumed by every status page and dashboard summary.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildRuntimeReadinessReport } from "./build-report";
 import type { RuntimeReadinessReport } from "./runtime-readiness";
 
@@ -14,7 +13,6 @@ function newRunId(): string {
 }
 
 export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .handler(async (): Promise<RuntimeReadinessReport> => {
     const now = new Date().toISOString();
     const { fetchCanonicalOptionChain } = await import(
