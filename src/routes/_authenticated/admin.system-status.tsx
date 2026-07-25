@@ -12,6 +12,7 @@ import { MIGRATION_CHECKLIST, ROLLBACK_CHECKLIST } from "@/lib/release-managemen
 import { REQUIRED_SECURITY_HEADERS } from "@/lib/security-audit";
 import { RuntimeReadinessSummary } from "@/components/runtime-readiness";
 import { useRuntimeReadinessQuery } from "@/lib/runtime-readiness/use-runtime-readiness";
+import { getReleaseMetadata, RELEASE_VERDICT } from "@/lib/release-metadata";
 
 export const Route = createFileRoute("/_authenticated/admin/system-status")({
   head: () => ({
@@ -38,9 +39,11 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 function SystemStatusPage() {
-  const buildVersion = (import.meta.env.VITE_BUILD_VERSION as string | undefined) ?? "dev";
-  const gitCommit = (import.meta.env.VITE_GIT_COMMIT as string | undefined) ?? "local";
-  const deployedAt = (import.meta.env.VITE_DEPLOYED_AT as string | undefined) ?? new Date().toISOString();
+  const meta = getReleaseMetadata();
+  const buildVersion = meta.version;
+  const gitCommit = meta.commitSha;
+  const deployedAt = meta.deployedAt;
+  void RELEASE_VERDICT;
 
   const rq = useRuntimeReadinessQuery();
   const report = rq.data ?? null;
