@@ -14,8 +14,8 @@ describe("/login → /auth compatibility redirect", () => {
     }
     expect(caught).not.toBeNull();
     expect(isRedirect(caught)).toBe(true);
-    const r = caught as { to?: string; search?: Record<string, unknown> };
-    expect(r.to).toBe("/auth");
-    expect(r.search).toEqual(search);
+    const r = caught as { options?: { to?: string; search?: Record<string, unknown> } };
+    expect(r.options?.to).toBe("/auth");
+    expect(r.options?.search).toEqual(search);
   });
 });
