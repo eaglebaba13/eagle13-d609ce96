@@ -4,7 +4,7 @@ import { isRedirect } from "@tanstack/react-router";
 
 describe("/login → /auth compatibility redirect", () => {
   it("redirects to /auth preserving search params", () => {
-    const opts = Route.options as { beforeLoad: (ctx: { search: Record<string, unknown> }) => unknown };
+    const opts = Route.options as unknown as { beforeLoad: (ctx: { search: Record<string, unknown> }) => unknown };
     const search = { redirect: "/dashboard", plan: "beta" };
     let caught: unknown = null;
     try {
