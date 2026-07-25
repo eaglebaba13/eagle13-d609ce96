@@ -239,8 +239,8 @@ function AdminRow({ r, dup, busy, onReview, onApprove, onReject, onOpenProof }: 
   const canDecide = r.status === "SUBMITTED" || r.status === "UNDER_REVIEW";
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 grid gap-3 md:grid-cols-[1fr,auto]">
-      <div>
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+      <div className="min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-mono text-xs">{r.paymentReference}</span>
           <span
