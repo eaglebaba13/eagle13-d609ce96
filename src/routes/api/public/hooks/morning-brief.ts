@@ -19,8 +19,11 @@ export const Route = createFileRoute("/api/public/hooks/morning-brief")({
         const apikey = request.headers.get("apikey") ?? "";
         const expected = process.env.SUPABASE_PUBLISHABLE_KEY ?? "";
         if (!expected || apikey !== expected) return unauthorized();
+        const url = new URL(request.url);
+        const forceRebuild = url.searchParams.get("rebuild") === "1";
+        const forceRedeliver = url.searchParams.get("redeliver") === "1" || forceRebuild;
         try {
-          const record = await runMorningBrief();
+          const record = await runMorningBrief({ forceRebuild, forceRedeliver });
           return Response.json({
             ok: true,
             reportId: record.payload.reportId,
