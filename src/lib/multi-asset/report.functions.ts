@@ -115,7 +115,10 @@ function mapRow(row: Record<string, unknown>): MorningReportRecord {
  * previous attempt succeeded. Public route hook and admin retry both call
  * this — the delivery step is skipped when `deliveryStatus === "SENT"`.
  */
-export async function runMorningBrief(opts?: { readonly forceRedeliver?: boolean }): Promise<MorningReportRecord> {
+export async function runMorningBrief(opts?: {
+  readonly forceRedeliver?: boolean;
+  readonly forceRebuild?: boolean;
+}): Promise<MorningReportRecord> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { buildLivePayload } = await import("./report-live.server");
   const { deliverMorningBrief } = await import("./report-telegram.server");
@@ -135,7 +138,7 @@ export async function runMorningBrief(opts?: { readonly forceRedeliver?: boolean
   let dataQuality: DataQuality = "PARTIAL";
   let record: MorningReportRecord;
 
-  if (existing.data) {
+  if (existing.data && !opts?.forceRebuild) {
     record = mapRow(existing.data as Record<string, unknown>);
     payload = record.payload;
     dataQuality = record.dataQuality;
@@ -147,6 +150,23 @@ export async function runMorningBrief(opts?: { readonly forceRedeliver?: boolean
       payload = buildEmptyPayload(reportDate, generatedAt);
       dataQuality = "PARTIAL";
     }
+    if (existing.data) {
+      const upd = await supabaseAdmin
+        .from("morning_reports")
+        .update({
+          payload: payload as unknown as import("@/integrations/supabase/types").Json,
+          data_quality: dataQuality,
+          generated_at: generatedAt,
+          delivery_status: "PENDING",
+        })
+        .eq("report_key", reportKey)
+        .select("*")
+        .single();
+      if (upd.error || !upd.data) {
+        throw new Error(`morning_report_rebuild_failed:${upd.error?.message ?? "unknown"}`);
+      }
+      record = mapRow(upd.data as Record<string, unknown>);
+    } else {
     const inserted = await supabaseAdmin
       .from("morning_reports")
       .insert({
@@ -167,6 +187,7 @@ export async function runMorningBrief(opts?: { readonly forceRedeliver?: boolean
       throw new Error(`morning_report_insert_failed:${inserted.error?.message ?? "unknown"}`);
     }
     record = mapRow(inserted.data as Record<string, unknown>);
+    }
   }
 
   if (record.deliveryStatus === "SENT" && !opts?.forceRedeliver) {
@@ -219,7 +240,7 @@ export const retryMorningBriefDelivery = createServerFn({ method: "POST" })
     const { data: isAdmin } = await context.supabase
       .rpc("has_role", { _user_id: context.userId, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden");
-    return runMorningBrief({ forceRedeliver: true });
+    return runMorningBrief({ forceRedeliver: true, forceRebuild: true });
   });
 
 /** Utility for callers rendering the disclaimer block on the UI. */
