@@ -17,7 +17,6 @@ import {
   type IndiaContextBlock,
   type FiiDiiBlock,
 } from "./report-composer";
-import { deliverMorningBrief } from "./report-telegram.server";
 import { composeDisclaimerBlock } from "./disclaimers";
 import type { MacroRatioResult } from "./macro-ratio";
 
@@ -118,6 +117,8 @@ function mapRow(row: Record<string, unknown>): MorningReportRecord {
  */
 export async function runMorningBrief(opts?: { readonly forceRedeliver?: boolean }): Promise<MorningReportRecord> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { buildLivePayload } = await import("./report-live.server");
+  const { deliverMorningBrief } = await import("./report-telegram.server");
   const now = Date.now();
   const reportDate = todayIst(now);
   const reportKey = buildReportKey(reportDate);
@@ -139,7 +140,13 @@ export async function runMorningBrief(opts?: { readonly forceRedeliver?: boolean
     payload = record.payload;
     dataQuality = record.dataQuality;
   } else {
-    payload = buildEmptyPayload(reportDate, generatedAt);
+    try {
+      payload = await buildLivePayload(reportDate, generatedAt);
+      dataQuality = payload.overallStatus;
+    } catch {
+      payload = buildEmptyPayload(reportDate, generatedAt);
+      dataQuality = "PARTIAL";
+    }
     const inserted = await supabaseAdmin
       .from("morning_reports")
       .insert({
