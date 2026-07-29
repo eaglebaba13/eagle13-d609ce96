@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as StrategyBuilderRouteImport } from './routes/strategy-builder'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as SignalAccuracyRouteImport } from './routes/signal-accuracy'
 import { Route as RiskRouteImport } from './routes/risk'
@@ -32,6 +33,7 @@ import { Route as DecisionRouteImport } from './routes/decision'
 import { Route as CryptoRouteImport } from './routes/crypto'
 import { Route as CombinedPcrRouteImport } from './routes/combined-pcr'
 import { Route as BrokerRouteImport } from './routes/broker'
+import { Route as BacktestingLabRouteImport } from './routes/backtesting-lab'
 import { Route as BacktestRouteImport } from './routes/backtest'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AstroRouteImport } from './routes/astro'
@@ -92,6 +94,11 @@ import { Route as AuthenticatedResearchLabRunsRunIdRouteImport } from './routes/
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StrategyBuilderRoute = StrategyBuilderRouteImport.update({
+  id: '/strategy-builder',
+  path: '/strategy-builder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatusRoute = StatusRouteImport.update({
@@ -202,6 +209,11 @@ const CombinedPcrRoute = CombinedPcrRouteImport.update({
 const BrokerRoute = BrokerRouteImport.update({
   id: '/broker',
   path: '/broker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BacktestingLabRoute = BacktestingLabRouteImport.update({
+  id: '/backtesting-lab',
+  path: '/backtesting-lab',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BacktestRoute = BacktestRouteImport.update({
@@ -531,6 +543,7 @@ export interface FileRoutesByFullPath {
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -553,6 +566,7 @@ export interface FileRoutesByFullPath {
   '/risk': typeof RiskRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -611,6 +625,7 @@ export interface FileRoutesByTo {
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -633,6 +648,7 @@ export interface FileRoutesByTo {
   '/risk': typeof RiskRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -693,6 +709,7 @@ export interface FileRoutesById {
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -715,6 +732,7 @@ export interface FileRoutesById {
   '/risk': typeof RiskRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -775,6 +793,7 @@ export interface FileRouteTypes {
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -797,6 +816,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -855,6 +875,7 @@ export interface FileRouteTypes {
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -877,6 +898,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -936,6 +958,7 @@ export interface FileRouteTypes {
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -958,6 +981,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -1018,6 +1042,7 @@ export interface RootRouteChildren {
   AstroRoute: typeof AstroRoute
   AuthRoute: typeof AuthRoute
   BacktestRoute: typeof BacktestRoute
+  BacktestingLabRoute: typeof BacktestingLabRoute
   BrokerRoute: typeof BrokerRoute
   CombinedPcrRoute: typeof CombinedPcrRoute
   CryptoRoute: typeof CryptoRouteWithChildren
@@ -1040,6 +1065,7 @@ export interface RootRouteChildren {
   RiskRoute: typeof RiskRoute
   SignalAccuracyRoute: typeof SignalAccuracyRoute
   StatusRoute: typeof StatusRoute
+  StrategyBuilderRoute: typeof StrategyBuilderRoute
   TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -1058,6 +1084,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strategy-builder': {
+      id: '/strategy-builder'
+      path: '/strategy-builder'
+      fullPath: '/strategy-builder'
+      preLoaderRoute: typeof StrategyBuilderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/status': {
@@ -1212,6 +1245,13 @@ declare module '@tanstack/react-router' {
       path: '/broker'
       fullPath: '/broker'
       preLoaderRoute: typeof BrokerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/backtesting-lab': {
+      id: '/backtesting-lab'
+      path: '/backtesting-lab'
+      fullPath: '/backtesting-lab'
+      preLoaderRoute: typeof BacktestingLabRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/backtest': {
@@ -1748,6 +1788,7 @@ const rootRouteChildren: RootRouteChildren = {
   AstroRoute: AstroRoute,
   AuthRoute: AuthRoute,
   BacktestRoute: BacktestRoute,
+  BacktestingLabRoute: BacktestingLabRoute,
   BrokerRoute: BrokerRoute,
   CombinedPcrRoute: CombinedPcrRoute,
   CryptoRoute: CryptoRouteWithChildren,
@@ -1770,6 +1811,7 @@ const rootRouteChildren: RootRouteChildren = {
   RiskRoute: RiskRoute,
   SignalAccuracyRoute: SignalAccuracyRoute,
   StatusRoute: StatusRoute,
+  StrategyBuilderRoute: StrategyBuilderRoute,
   TermsRoute: TermsRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:

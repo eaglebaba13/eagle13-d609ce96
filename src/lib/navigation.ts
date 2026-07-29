@@ -105,6 +105,8 @@ export const NAV_REGISTRY: NavItem[] = [
   { id: "market-replay", label: "Market Replay", icon: PlayCircle, to: "/market-replay", section: "RESEARCH", order: 130, desktopVisible: true, mobileVisible: true },
   { id: "combined-pcr", label: "Combined PCR — Coming Next", icon: Layers, to: "/combined-pcr", section: "RESEARCH", order: 140, desktopVisible: true, mobileVisible: true },
   { id: "strategy-analytics", label: "Strategy Analytics", icon: BarChart3, to: "/strategy-analytics", section: "RESEARCH", order: 145, desktopVisible: true, mobileVisible: true },
+  { id: "strategy-builder", label: "Strategy Builder", icon: Layers, to: "/strategy-builder", section: "RESEARCH", order: 150, desktopVisible: true, mobileVisible: true },
+  { id: "backtesting-lab", label: "Backtesting Lab", icon: History, to: "/backtesting-lab", section: "RESEARCH", order: 155, desktopVisible: true, mobileVisible: true },
 
   // MARKET
   { id: "option-strategy", label: "NIFTY50 Buying", icon: Target, to: "/option-strategy", section: "MARKET", order: 210, desktopVisible: true, mobileVisible: true },
