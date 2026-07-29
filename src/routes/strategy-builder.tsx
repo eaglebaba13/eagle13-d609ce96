@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   BUILTIN_STRATEGIES,
@@ -48,9 +48,16 @@ function loadDraft(): DraftStrategy {
   if (typeof window === "undefined") return blankStrategy();
   try {
     const raw = window.localStorage.getItem("eb:strategy-draft");
-    if (raw) return JSON.parse(raw) as DraftStrategy;
-  } catch { /* ignore */ }
-  return blankStrategy();
+    if (!raw) return blankStrategy();
+    const parsed = JSON.parse(raw) as DraftStrategy;
+    if (!parsed || typeof parsed !== "object" || !parsed.entry || !Array.isArray(parsed.entry.conditions)) {
+      return blankStrategy();
+    }
+    return parsed;
+  } catch {
+    try { window.localStorage.removeItem("eb:strategy-draft"); } catch { /* ignore */ }
+    return blankStrategy();
+  }
 }
 
 function blankStrategy(): DraftStrategy {
@@ -65,7 +72,9 @@ function blankStrategy(): DraftStrategy {
 }
 
 function StrategyBuilderPage() {
-  const [draft, setDraft] = useState<DraftStrategy>(() => loadDraft());
+  // SSR-safe: start with blank; hydrate draft from localStorage after mount.
+  const [draft, setDraft] = useState<DraftStrategy>(() => blankStrategy());
+  useEffect(() => { setDraft(loadDraft()); }, []);
 
   const persist = (next: DraftStrategy) => {
     setDraft(next);
