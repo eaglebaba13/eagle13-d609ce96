@@ -267,9 +267,9 @@ function BacktestingLabPage() {
           <h2 style={h2()}>Export</h2>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button style={btnGhost()} onClick={() => download(`${strategy.id}-trades.csv`, "text/csv", tradesToCsv(result))}>Export CSV</button>
-            <button style={btnGhost()} onClick={() => download(`${strategy.id}-backtest.json`, "application/json", backtestToJson(strategy, result, report))}>Export JSON</button>
+            <button style={btnGhost()} onClick={() => download(`${strategy.id}-backtest.json`, "application/json", backtestToJson(strategy, result, report, dataset))}>Export JSON</button>
             <button style={btnGhost()} onClick={() => {
-              const body = reportToPrintable(strategy, result, report);
+              const body = reportToPrintable(strategy, result, report, dataset);
               const w = typeof window !== "undefined" ? window.open("", "_blank") : null;
               if (w) {
                 w.document.write(`<pre style="font-family:ui-monospace,monospace;padding:24px;white-space:pre-wrap">${body.replace(/</g, "&lt;")}</pre>`);
