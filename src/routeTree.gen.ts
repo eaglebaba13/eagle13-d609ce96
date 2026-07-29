@@ -33,6 +33,7 @@ import { Route as DecisionRouteImport } from './routes/decision'
 import { Route as CryptoRouteImport } from './routes/crypto'
 import { Route as CombinedPcrRouteImport } from './routes/combined-pcr'
 import { Route as BrokerRouteImport } from './routes/broker'
+import { Route as BacktestingLabRouteImport } from './routes/backtesting-lab'
 import { Route as BacktestRouteImport } from './routes/backtest'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AstroRouteImport } from './routes/astro'
@@ -208,6 +209,11 @@ const CombinedPcrRoute = CombinedPcrRouteImport.update({
 const BrokerRoute = BrokerRouteImport.update({
   id: '/broker',
   path: '/broker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BacktestingLabRoute = BacktestingLabRouteImport.update({
+  id: '/backtesting-lab',
+  path: '/backtesting-lab',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BacktestRoute = BacktestRouteImport.update({
@@ -537,6 +543,7 @@ export interface FileRoutesByFullPath {
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -618,6 +625,7 @@ export interface FileRoutesByTo {
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -701,6 +709,7 @@ export interface FileRoutesById {
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -784,6 +793,7 @@ export interface FileRouteTypes {
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -865,6 +875,7 @@ export interface FileRouteTypes {
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -947,6 +958,7 @@ export interface FileRouteTypes {
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -1030,6 +1042,7 @@ export interface RootRouteChildren {
   AstroRoute: typeof AstroRoute
   AuthRoute: typeof AuthRoute
   BacktestRoute: typeof BacktestRoute
+  BacktestingLabRoute: typeof BacktestingLabRoute
   BrokerRoute: typeof BrokerRoute
   CombinedPcrRoute: typeof CombinedPcrRoute
   CryptoRoute: typeof CryptoRouteWithChildren
@@ -1232,6 +1245,13 @@ declare module '@tanstack/react-router' {
       path: '/broker'
       fullPath: '/broker'
       preLoaderRoute: typeof BrokerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/backtesting-lab': {
+      id: '/backtesting-lab'
+      path: '/backtesting-lab'
+      fullPath: '/backtesting-lab'
+      preLoaderRoute: typeof BacktestingLabRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/backtest': {
@@ -1768,6 +1788,7 @@ const rootRouteChildren: RootRouteChildren = {
   AstroRoute: AstroRoute,
   AuthRoute: AuthRoute,
   BacktestRoute: BacktestRoute,
+  BacktestingLabRoute: BacktestingLabRoute,
   BrokerRoute: BrokerRoute,
   CombinedPcrRoute: CombinedPcrRoute,
   CryptoRoute: CryptoRouteWithChildren,
