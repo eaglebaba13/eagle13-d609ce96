@@ -14,6 +14,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StrategyBuilderRouteImport } from './routes/strategy-builder'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as SignalAccuracyRouteImport } from './routes/signal-accuracy'
+import { Route as RiskCenterRouteImport } from './routes/risk-center'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ReleaseNotesRouteImport } from './routes/release-notes'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -116,6 +117,11 @@ const StatusRoute = StatusRouteImport.update({
 const SignalAccuracyRoute = SignalAccuracyRouteImport.update({
   id: '/signal-accuracy',
   path: '/signal-accuracy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiskCenterRoute = RiskCenterRouteImport.update({
+  id: '/risk-center',
+  path: '/risk-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RiskRoute = RiskRouteImport.update({
@@ -577,6 +583,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
@@ -661,6 +668,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
@@ -747,6 +755,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
@@ -833,6 +842,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
     | '/strategy-builder'
@@ -917,6 +927,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
     | '/strategy-builder'
@@ -1002,6 +1013,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
     | '/strategy-builder'
@@ -1088,6 +1100,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ReleaseNotesRoute: typeof ReleaseNotesRoute
   RiskRoute: typeof RiskRoute
+  RiskCenterRoute: typeof RiskCenterRoute
   SignalAccuracyRoute: typeof SignalAccuracyRoute
   StatusRoute: typeof StatusRoute
   StrategyBuilderRoute: typeof StrategyBuilderRoute
@@ -1138,6 +1151,13 @@ declare module '@tanstack/react-router' {
       path: '/signal-accuracy'
       fullPath: '/signal-accuracy'
       preLoaderRoute: typeof SignalAccuracyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/risk-center': {
+      id: '/risk-center'
+      path: '/risk-center'
+      fullPath: '/risk-center'
+      preLoaderRoute: typeof RiskCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/risk': {
@@ -1850,6 +1870,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ReleaseNotesRoute: ReleaseNotesRoute,
   RiskRoute: RiskRoute,
+  RiskCenterRoute: RiskCenterRoute,
   SignalAccuracyRoute: SignalAccuracyRoute,
   StatusRoute: StatusRoute,
   StrategyBuilderRoute: StrategyBuilderRoute,
