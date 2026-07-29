@@ -82,6 +82,7 @@ import { Route as AuthenticatedAdminResearchLabRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 import { Route as AuthenticatedAdminReadinessRouteImport } from './routes/_authenticated/admin.readiness'
 import { Route as AuthenticatedAdminProvidersRouteImport } from './routes/_authenticated/admin.providers'
+import { Route as AuthenticatedAdminProviderHealthRouteImport } from './routes/_authenticated/admin.provider-health'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminLaunchReadinessRouteImport } from './routes/_authenticated/admin.launch-readiness'
 import { Route as AuthenticatedAdminInstitutionalFlowRouteImport } from './routes/_authenticated/admin.institutional-flow'
@@ -486,6 +487,12 @@ const AuthenticatedAdminProvidersRoute =
     path: '/admin/providers',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminProviderHealthRoute =
+  AuthenticatedAdminProviderHealthRouteImport.update({
+    id: '/admin/provider-health',
+    path: '/admin/provider-health',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminPaymentsRoute =
   AuthenticatedAdminPaymentsRouteImport.update({
     id: '/admin/payments',
@@ -621,6 +628,7 @@ export interface FileRoutesByFullPath {
   '/admin/institutional-flow': typeof AuthenticatedAdminInstitutionalFlowRoute
   '/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
   '/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -706,6 +714,7 @@ export interface FileRoutesByTo {
   '/admin/institutional-flow': typeof AuthenticatedAdminInstitutionalFlowRoute
   '/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
   '/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -793,6 +802,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/institutional-flow': typeof AuthenticatedAdminInstitutionalFlowRoute
   '/_authenticated/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
   '/_authenticated/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/_authenticated/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -880,6 +890,7 @@ export interface FileRouteTypes {
     | '/admin/institutional-flow'
     | '/admin/launch-readiness'
     | '/admin/payments'
+    | '/admin/provider-health'
     | '/admin/providers'
     | '/admin/readiness'
     | '/admin/referrals'
@@ -965,6 +976,7 @@ export interface FileRouteTypes {
     | '/admin/institutional-flow'
     | '/admin/launch-readiness'
     | '/admin/payments'
+    | '/admin/provider-health'
     | '/admin/providers'
     | '/admin/readiness'
     | '/admin/referrals'
@@ -1051,6 +1063,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/institutional-flow'
     | '/_authenticated/admin/launch-readiness'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/provider-health'
     | '/_authenticated/admin/providers'
     | '/_authenticated/admin/readiness'
     | '/_authenticated/admin/referrals'
@@ -1629,6 +1642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProvidersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/provider-health': {
+      id: '/_authenticated/admin/provider-health'
+      path: '/admin/provider-health'
+      fullPath: '/admin/provider-health'
+      preLoaderRoute: typeof AuthenticatedAdminProviderHealthRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/payments': {
       id: '/_authenticated/admin/payments'
       path: '/admin/payments'
@@ -1774,6 +1794,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminInstitutionalFlowRoute: typeof AuthenticatedAdminInstitutionalFlowRoute
   AuthenticatedAdminLaunchReadinessRoute: typeof AuthenticatedAdminLaunchReadinessRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminProviderHealthRoute: typeof AuthenticatedAdminProviderHealthRoute
   AuthenticatedAdminProvidersRoute: typeof AuthenticatedAdminProvidersRoute
   AuthenticatedAdminReadinessRoute: typeof AuthenticatedAdminReadinessRoute
   AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
@@ -1814,6 +1835,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminLaunchReadinessRoute:
     AuthenticatedAdminLaunchReadinessRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+  AuthenticatedAdminProviderHealthRoute: AuthenticatedAdminProviderHealthRoute,
   AuthenticatedAdminProvidersRoute: AuthenticatedAdminProvidersRoute,
   AuthenticatedAdminReadinessRoute: AuthenticatedAdminReadinessRoute,
   AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
