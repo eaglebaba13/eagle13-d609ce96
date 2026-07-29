@@ -17,6 +17,7 @@ import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ReleaseNotesRouteImport } from './routes/release-notes'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as OptionsChainRouteImport } from './routes/options-chain'
 import { Route as OptionsAnalyticsRouteImport } from './routes/options-analytics'
 import { Route as OptionStrategyRouteImport } from './routes/option-strategy'
@@ -129,6 +130,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OptionsChainRoute = OptionsChainRouteImport.update({
@@ -560,6 +566,7 @@ export interface FileRoutesByFullPath {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
@@ -642,6 +649,7 @@ export interface FileRoutesByTo {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
@@ -726,6 +734,7 @@ export interface FileRoutesById {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
@@ -810,6 +819,7 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
@@ -892,6 +902,7 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
@@ -975,6 +986,7 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
@@ -1059,6 +1071,7 @@ export interface RootRouteChildren {
   OptionStrategyRoute: typeof OptionStrategyRoute
   OptionsAnalyticsRoute: typeof OptionsAnalyticsRoute
   OptionsChainRoute: typeof OptionsChainRoute
+  PortfolioRoute: typeof PortfolioRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ReleaseNotesRoute: typeof ReleaseNotesRoute
@@ -1133,6 +1146,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/options-chain': {
@@ -1805,6 +1825,7 @@ const rootRouteChildren: RootRouteChildren = {
   OptionStrategyRoute: OptionStrategyRoute,
   OptionsAnalyticsRoute: OptionsAnalyticsRoute,
   OptionsChainRoute: OptionsChainRoute,
+  PortfolioRoute: PortfolioRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ReleaseNotesRoute: ReleaseNotesRoute,
