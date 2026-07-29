@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as StrategyBuilderRouteImport } from './routes/strategy-builder'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as SignalAccuracyRouteImport } from './routes/signal-accuracy'
 import { Route as RiskRouteImport } from './routes/risk'
@@ -92,6 +93,11 @@ import { Route as AuthenticatedResearchLabRunsRunIdRouteImport } from './routes/
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StrategyBuilderRoute = StrategyBuilderRouteImport.update({
+  id: '/strategy-builder',
+  path: '/strategy-builder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatusRoute = StatusRouteImport.update({
@@ -553,6 +559,7 @@ export interface FileRoutesByFullPath {
   '/risk': typeof RiskRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -633,6 +640,7 @@ export interface FileRoutesByTo {
   '/risk': typeof RiskRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -715,6 +723,7 @@ export interface FileRoutesById {
   '/risk': typeof RiskRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -797,6 +806,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -877,6 +887,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -958,6 +969,7 @@ export interface FileRouteTypes {
     | '/risk'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -1040,6 +1052,7 @@ export interface RootRouteChildren {
   RiskRoute: typeof RiskRoute
   SignalAccuracyRoute: typeof SignalAccuracyRoute
   StatusRoute: typeof StatusRoute
+  StrategyBuilderRoute: typeof StrategyBuilderRoute
   TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -1058,6 +1071,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strategy-builder': {
+      id: '/strategy-builder'
+      path: '/strategy-builder'
+      fullPath: '/strategy-builder'
+      preLoaderRoute: typeof StrategyBuilderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/status': {
@@ -1770,6 +1790,7 @@ const rootRouteChildren: RootRouteChildren = {
   RiskRoute: RiskRoute,
   SignalAccuracyRoute: SignalAccuracyRoute,
   StatusRoute: StatusRoute,
+  StrategyBuilderRoute: StrategyBuilderRoute,
   TermsRoute: TermsRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
@@ -1784,13 +1805,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
