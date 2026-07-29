@@ -96,6 +96,7 @@ export const NAV_REGISTRY: NavItem[] = [
   { id: "live-market-terminal", label: "Market Terminal", icon: Activity, to: "/live-market-terminal", section: "MAIN", order: 40, desktopVisible: true, mobileVisible: true, mobileBottom: true, bottomOrder: 3 },
   { id: "level-terminal", label: "Level Terminal", icon: TrendingUp, to: "/live-levels", section: "MAIN", order: 50, desktopVisible: true, mobileVisible: true },
   { id: "decision", label: "Decision", icon: Brain, to: "/decision", section: "MAIN", order: 60, desktopVisible: true, mobileVisible: true },
+  { id: "ai-decision-center", label: "AI Decision Center", icon: Brain, to: "/ai-decision-center", section: "MAIN", order: 65, desktopVisible: true, mobileVisible: true },
   { id: "risk", label: "Risk", icon: ShieldCheck, to: "/risk", section: "MAIN", order: 70, desktopVisible: true, mobileVisible: true },
 
   // RESEARCH
