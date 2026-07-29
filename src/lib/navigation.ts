@@ -135,6 +135,7 @@ export const NAV_REGISTRY: NavItem[] = [
   { id: "admin-beta-readiness", label: "Beta Readiness", icon: ShieldCheck, to: "/admin/beta-readiness", section: "ACCOUNT", order: 307, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
   { id: "admin-alerts", label: "Smart Alerts (Admin)", icon: Bell, to: "/admin/alerts", section: "ACCOUNT", order: 308, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
   { id: "admin-widgets", label: "Widget Toggles", icon: Settings, to: "/admin/widgets", section: "ACCOUNT", order: 309, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
+  { id: "admin-provider-health", label: "Provider Health", icon: Activity, to: "/admin/provider-health", section: "ACCOUNT", order: 306.5, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
   { id: "license", label: "License", icon: KeyRound, to: "/license", section: "ACCOUNT", order: 320, desktopVisible: true, mobileVisible: true },
   { id: "billing", label: "Billing", icon: ScrollText, to: "/billing", section: "ACCOUNT", order: 330, desktopVisible: true, mobileVisible: true },
   { id: "pricing", label: "Pricing", icon: FileBarChart, to: "/pricing", section: "ACCOUNT", order: 340, desktopVisible: true, mobileVisible: true },
