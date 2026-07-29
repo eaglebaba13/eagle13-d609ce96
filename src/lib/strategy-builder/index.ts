@@ -5,3 +5,5 @@ export * from "./templates";
 export * from "./report";
 export * from "./synthetic-bars";
 export * from "./exports";
+export * from "./dataset";
+export * from "./csv-import";
