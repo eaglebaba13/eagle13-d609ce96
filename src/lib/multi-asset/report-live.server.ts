@@ -19,6 +19,7 @@ import { buildReportId } from "./report-composer";
 import type {
   ComposeInput, InstrumentBlock, IndiaContextBlock, FiiDiiBlock, DataQuality,
 } from "./report-composer";
+import { buildInstitutionalIntelligenceSnapshot } from "@/lib/institutional-intelligence/snapshot.server";
 
 function unavailableInstrument(inst: BriefInstrument): InstrumentBlock {
   return {
@@ -210,6 +211,12 @@ export async function buildLivePayload(reportDate: string, generatedAt: string):
   };
 
   const blocks = [nifty, banknifty, xauusd, xagusd, btcBlock, ethBlock];
+  const institutionalIntelligence = await buildInstitutionalIntelligenceSnapshot({
+    vix,
+    combinedPcr: null,
+    globalCompositeBiasPct: null,
+  }).catch(() => null);
+
   return {
     reportDate, generatedAt,
     reportId: buildReportId(reportDate),
@@ -219,6 +226,7 @@ export async function buildLivePayload(reportDate: string, generatedAt: string):
     btc: btcBlock, eth: ethBlock,
     ratio,
     indiaContext: india, fiiDii: fii,
+    institutionalIntelligence,
     overallStatus: overallQuality(blocks),
   };
 }
