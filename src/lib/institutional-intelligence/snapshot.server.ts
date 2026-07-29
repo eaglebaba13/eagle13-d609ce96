@@ -8,7 +8,7 @@ import { computeSectorRotation } from "./sector-strength";
 import { computeIntelligenceScore } from "./score";
 import { RESEARCH_FLOW, RESEARCH_NEWS } from "./index";
 import { fetchYahooQuotes } from "./yahoo-quote.server";
-import { NIFTY50_REGISTRY } from "@/lib/market-breadth/nifty50-registry";
+import { NIFTY50_CONSTITUENTS } from "@/lib/market-breadth/nifty50-registry";
 import type {
   InstitutionalIntelligenceSnapshot,
   IntelligenceScoreInput,
@@ -40,8 +40,7 @@ export async function buildInstitutionalIntelligenceSnapshot(
 
   const top10Syms = TOP10_REGISTRY.map((c) => c.yahooSymbol);
   const sectorSyms = II_SECTOR_REGISTRY.map((s) => s.yahooSymbol);
-  const n50Syms = (NIFTY50_REGISTRY as ReadonlyArray<{ symbol: string }>)
-    .map((c) => yahooSymbolFor(c.symbol));
+  const n50Syms = NIFTY50_CONSTITUENTS.map((c) => yahooSymbolFor(c.symbol));
 
   const [top10Quotes, sectorQuotes, n50Quotes] = await Promise.all([
     fetchYahooQuotes(top10Syms),
