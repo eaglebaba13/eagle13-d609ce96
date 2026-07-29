@@ -253,9 +253,9 @@ export function computeGtiAiDecision(input: GtiAiDecisionInput): GtiAiDecision {
   //    Decision engine already accounts for module coverage; institutional
   //    contributes an alignment adjustment weighted by its own coverage.
   const baseConf = clamp(dec.confidence, 0, 100);
-  let confidence = baseConf * 0.7;
+  let confidence: number;
   if (action === "WAIT") {
-    confidence = Math.min(baseConf, 50); // WAIT should not read as high-conviction
+    confidence = Math.min(baseConf, 50);
   } else if (inst.available) {
     const magnitude = Math.abs(inst.score - 50) / 50; // 0..1
     const alignmentDelta = aligned
@@ -263,10 +263,9 @@ export function computeGtiAiDecision(input: GtiAiDecisionInput): GtiAiDecision {
       : instDir === 0
         ? 0
         : -20 * magnitude * inst.confidence;
-    confidence = baseConf * 0.7 + 30 * (aligned ? 1 : 0) + alignmentDelta - 30 * (aligned ? 1 : 0);
-    // Simpler equivalent, kept explicit for clarity:
     confidence = baseConf * 0.7 + alignmentDelta + (aligned ? 10 : 0);
   } else {
+    confidence = baseConf * 0.7;
     warnings.push("Institutional Intelligence unavailable — using Decision Engine confidence only.");
   }
   confidence = clamp(round(confidence), 0, 100);
