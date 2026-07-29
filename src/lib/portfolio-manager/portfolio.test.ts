@@ -34,7 +34,7 @@ describe("position sizing", () => {
     expect(computePositionSize({ capital: 1000, riskPct: 1, entry: 100, stopLoss: 100 }).valid).toBe(false);
   });
   it("rounds down to lots and computes max loss", () => {
-    const r = computePositionSize({ capital: 500_000, riskPct: 1, entry: 24000, stopLoss: 23950, lotSize: 75 });
+    const r = computePositionSize({ capital: 5_000_000, riskPct: 1, entry: 24000, stopLoss: 23950, lotSize: 75 });
     expect(r.valid).toBe(true);
     expect(r.recommendedQuantity).toBe(75);
     expect(r.maxLoss).toBe(75 * 50);
