@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   BUILTIN_STRATEGIES,
@@ -9,6 +9,10 @@ import {
   reportToPrintable,
   runBacktest,
   tradesToCsv,
+  parseCsvHistorical,
+  syntheticDataset,
+  type CsvParseResult,
+  type HistoricalDataset,
   type BacktestResult,
   type Strategy,
 } from "@/lib/strategy-builder";
@@ -42,22 +46,47 @@ function loadDraft(): Strategy | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem("eb:strategy-draft");
-    if (raw) return JSON.parse(raw) as Strategy;
-  } catch { /* ignore */ }
-  return null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Strategy;
+    if (!parsed || typeof parsed !== "object" || !parsed.entry || !Array.isArray(parsed.entry.conditions)) return null;
+    return parsed;
+  } catch {
+    try { window.localStorage.removeItem("eb:strategy-draft"); } catch { /* ignore */ }
+    return null;
+  }
 }
 
 function BacktestingLabPage() {
-  const draft = useMemo(loadDraft, []);
+  const [draft, setDraft] = useState<Strategy | null>(null);
+  useEffect(() => { setDraft(loadDraft()); }, []);
   const initialStrategies = useMemo<Strategy[]>(() => draft ? [draft, ...BUILTIN_STRATEGIES] : [...BUILTIN_STRATEGIES], [draft]);
-  const [selectedId, setSelectedId] = useState<string>(initialStrategies[0].id);
+  const [selectedId, setSelectedId] = useState<string>(BUILTIN_STRATEGIES[0].id);
   const [seed, setSeed] = useState(3);
   const [bars, setBars] = useState(250);
+  const [imported, setImported] = useState<CsvParseResult | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
 
   const strategy = initialStrategies.find((s) => s.id === selectedId) ?? initialStrategies[0];
-  const barsData = useMemo(() => generateSyntheticBars({ seed, bars }), [seed, bars]);
-  const result = useMemo<BacktestResult>(() => runBacktest(strategy, barsData), [strategy, barsData]);
+  const syntheticBars = useMemo(() => generateSyntheticBars({ seed, bars }), [seed, bars]);
+  const dataset: HistoricalDataset = useMemo(
+    () => imported?.dataset.status === "IMPORTED" ? imported.dataset : syntheticDataset(syntheticBars, seed),
+    [imported, syntheticBars, seed],
+  );
+  const useImported = dataset.status === "IMPORTED";
+  const result = useMemo<BacktestResult>(() => runBacktest(strategy, dataset.bars), [strategy, dataset]);
   const report = useMemo(() => generateReport(result), [result]);
+
+  const onCsvFile = async (file: File) => {
+    setImportError(null);
+    try {
+      const text = await file.text();
+      const parsed = parseCsvHistorical(text, { filename: file.name });
+      setImported(parsed);
+      if (parsed.quality.critical) setImportError(`Import blocked: ${parsed.quality.issues[0] ?? "critical data quality issue"}`);
+    } catch (e) {
+      setImportError((e as Error).message);
+    }
+  };
 
   const download = (filename: string, mime: string, body: string) => {
     if (typeof window === "undefined") return;
@@ -80,6 +109,48 @@ function BacktestingLabPage() {
           </div>
           <Link to="/strategy-builder" style={btnGhost()}>← Back to Strategy Builder</Link>
         </header>
+
+        {!useImported && (
+          <div role="alert" style={{
+            background: "rgba(245, 158, 11, 0.12)", border: "1px solid rgba(245,158,11,0.5)",
+            color: "#fbbf24", borderRadius: 8, padding: "10px 14px", marginBottom: 12, fontSize: 13, fontWeight: 600,
+          }}>
+            ⚠ SYNTHETIC DATA — NOT LIVE MARKET DATA — FOR ENGINE VALIDATION ONLY.
+            <div style={{ fontWeight: 400, fontSize: 11, color: C.muted, marginTop: 4 }}>
+              Source: {dataset.source} · Bars: {dataset.bars.length} · Timeframe: {dataset.timeframe} · Generated: {new Date(dataset.generatedAt).toISOString().slice(0, 16)}Z
+            </div>
+          </div>
+        )}
+        {useImported && (
+          <div style={{
+            background: "rgba(16,185,129,0.10)", border: "1px solid rgba(16,185,129,0.45)",
+            color: "#34d399", borderRadius: 8, padding: "10px 14px", marginBottom: 12, fontSize: 13,
+          }}>
+            IMPORTED DATASET · {dataset.filename} · {dataset.bars.length} bars · {dataset.timeframe}
+            {imported && (
+              <div style={{ color: C.muted, fontSize: 11, marginTop: 6 }}>
+                Valid: {imported.quality.validRows} · Invalid: {imported.quality.invalidRows} · Duplicates: {imported.quality.duplicateRows}
+                {imported.quality.issues.length > 0 && ` · Issues: ${imported.quality.issues.join("; ")}`}
+              </div>
+            )}
+          </div>
+        )}
+
+        <section style={panel()}>
+          <h2 style={h2()}>Historical Data Source</h2>
+          <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+            <input type="file" accept=".csv,text/csv" onChange={(e) => {
+              const f = e.target.files?.[0]; if (f) void onCsvFile(f);
+            }} style={{ fontSize: 12, color: C.muted }} />
+            {imported && (
+              <button style={btnGhost()} onClick={() => { setImported(null); setImportError(null); }}>Clear import → use synthetic</button>
+            )}
+          </div>
+          <p style={{ color: C.muted, fontSize: 11, margin: "6px 0 0" }}>
+            Local CSV only. Columns: timestamp, open, high, low, close [, volume, gti, astro_bias, gann_bias, vix, pcr, institutional_score, breadth, sector_rotation, ai_decision, gold_silver_ratio]. Never uploaded.
+          </p>
+          {importError && <p style={{ color: C.bear, fontSize: 12, margin: "6px 0 0" }}>{importError}</p>}
+        </section>
 
         <section style={panel()}>
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 8, alignItems: "end" }}>
@@ -196,9 +267,9 @@ function BacktestingLabPage() {
           <h2 style={h2()}>Export</h2>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button style={btnGhost()} onClick={() => download(`${strategy.id}-trades.csv`, "text/csv", tradesToCsv(result))}>Export CSV</button>
-            <button style={btnGhost()} onClick={() => download(`${strategy.id}-backtest.json`, "application/json", backtestToJson(strategy, result, report))}>Export JSON</button>
+            <button style={btnGhost()} onClick={() => download(`${strategy.id}-backtest.json`, "application/json", backtestToJson(strategy, result, report, dataset))}>Export JSON</button>
             <button style={btnGhost()} onClick={() => {
-              const body = reportToPrintable(strategy, result, report);
+              const body = reportToPrintable(strategy, result, report, dataset);
               const w = typeof window !== "undefined" ? window.open("", "_blank") : null;
               if (w) {
                 w.document.write(`<pre style="font-family:ui-monospace,monospace;padding:24px;white-space:pre-wrap">${body.replace(/</g, "&lt;")}</pre>`);
