@@ -97,7 +97,7 @@ function RiskCenterPage() {
       previousInstitutionalScore: 50, institutionalScore: 65,
       pcr: 1.25, vix: 14,
     });
-    setAlerts(next);
+    setAlerts([...next]);
     if (typeof window !== "undefined") window.alert(`Triggered: ${triggered.length}`);
   };
 
