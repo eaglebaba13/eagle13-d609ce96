@@ -55,6 +55,7 @@ import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authen
 import { Route as AuthenticatedMultiAssetIntelligenceRouteImport } from './routes/_authenticated/multi-asset-intelligence'
 import { Route as AuthenticatedLiveOptionTerminalRouteImport } from './routes/_authenticated/live-option-terminal'
 import { Route as AuthenticatedLicenseRouteImport } from './routes/_authenticated/license'
+import { Route as AuthenticatedInstitutionalIntelligenceRouteImport } from './routes/_authenticated/institutional-intelligence'
 import { Route as AuthenticatedInstitutionalFlowRouteImport } from './routes/_authenticated/institutional-flow'
 import { Route as AuthenticatedBillingRouteImport } from './routes/_authenticated/billing'
 import { Route as AuthenticatedBacktestLabRouteImport } from './routes/_authenticated/backtest-lab'
@@ -325,6 +326,12 @@ const AuthenticatedLicenseRoute = AuthenticatedLicenseRouteImport.update({
   path: '/license',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInstitutionalIntelligenceRoute =
+  AuthenticatedInstitutionalIntelligenceRouteImport.update({
+    id: '/institutional-intelligence',
+    path: '/institutional-intelligence',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedInstitutionalFlowRoute =
   AuthenticatedInstitutionalFlowRouteImport.update({
     id: '/institutional-flow',
@@ -547,6 +554,7 @@ export interface FileRoutesByFullPath {
   '/backtest-lab': typeof AuthenticatedBacktestLabRoute
   '/billing': typeof AuthenticatedBillingRoute
   '/institutional-flow': typeof AuthenticatedInstitutionalFlowRoute
+  '/institutional-intelligence': typeof AuthenticatedInstitutionalIntelligenceRoute
   '/license': typeof AuthenticatedLicenseRoute
   '/live-option-terminal': typeof AuthenticatedLiveOptionTerminalRoute
   '/multi-asset-intelligence': typeof AuthenticatedMultiAssetIntelligenceRoute
@@ -625,6 +633,7 @@ export interface FileRoutesByTo {
   '/backtest-lab': typeof AuthenticatedBacktestLabRoute
   '/billing': typeof AuthenticatedBillingRoute
   '/institutional-flow': typeof AuthenticatedInstitutionalFlowRoute
+  '/institutional-intelligence': typeof AuthenticatedInstitutionalIntelligenceRoute
   '/license': typeof AuthenticatedLicenseRoute
   '/live-option-terminal': typeof AuthenticatedLiveOptionTerminalRoute
   '/multi-asset-intelligence': typeof AuthenticatedMultiAssetIntelligenceRoute
@@ -705,6 +714,7 @@ export interface FileRoutesById {
   '/_authenticated/backtest-lab': typeof AuthenticatedBacktestLabRoute
   '/_authenticated/billing': typeof AuthenticatedBillingRoute
   '/_authenticated/institutional-flow': typeof AuthenticatedInstitutionalFlowRoute
+  '/_authenticated/institutional-intelligence': typeof AuthenticatedInstitutionalIntelligenceRoute
   '/_authenticated/license': typeof AuthenticatedLicenseRoute
   '/_authenticated/live-option-terminal': typeof AuthenticatedLiveOptionTerminalRoute
   '/_authenticated/multi-asset-intelligence': typeof AuthenticatedMultiAssetIntelligenceRoute
@@ -785,6 +795,7 @@ export interface FileRouteTypes {
     | '/backtest-lab'
     | '/billing'
     | '/institutional-flow'
+    | '/institutional-intelligence'
     | '/license'
     | '/live-option-terminal'
     | '/multi-asset-intelligence'
@@ -863,6 +874,7 @@ export interface FileRouteTypes {
     | '/backtest-lab'
     | '/billing'
     | '/institutional-flow'
+    | '/institutional-intelligence'
     | '/license'
     | '/live-option-terminal'
     | '/multi-asset-intelligence'
@@ -942,6 +954,7 @@ export interface FileRouteTypes {
     | '/_authenticated/backtest-lab'
     | '/_authenticated/billing'
     | '/_authenticated/institutional-flow'
+    | '/_authenticated/institutional-intelligence'
     | '/_authenticated/license'
     | '/_authenticated/live-option-terminal'
     | '/_authenticated/multi-asset-intelligence'
@@ -1349,6 +1362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLicenseRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/institutional-intelligence': {
+      id: '/_authenticated/institutional-intelligence'
+      path: '/institutional-intelligence'
+      fullPath: '/institutional-intelligence'
+      preLoaderRoute: typeof AuthenticatedInstitutionalIntelligenceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/institutional-flow': {
       id: '/_authenticated/institutional-flow'
       path: '/institutional-flow'
@@ -1614,6 +1634,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedBacktestLabRoute: typeof AuthenticatedBacktestLabRoute
   AuthenticatedBillingRoute: typeof AuthenticatedBillingRoute
   AuthenticatedInstitutionalFlowRoute: typeof AuthenticatedInstitutionalFlowRoute
+  AuthenticatedInstitutionalIntelligenceRoute: typeof AuthenticatedInstitutionalIntelligenceRoute
   AuthenticatedLicenseRoute: typeof AuthenticatedLicenseRoute
   AuthenticatedLiveOptionTerminalRoute: typeof AuthenticatedLiveOptionTerminalRoute
   AuthenticatedMultiAssetIntelligenceRoute: typeof AuthenticatedMultiAssetIntelligenceRoute
@@ -1649,6 +1670,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBacktestLabRoute: AuthenticatedBacktestLabRoute,
   AuthenticatedBillingRoute: AuthenticatedBillingRoute,
   AuthenticatedInstitutionalFlowRoute: AuthenticatedInstitutionalFlowRoute,
+  AuthenticatedInstitutionalIntelligenceRoute:
+    AuthenticatedInstitutionalIntelligenceRoute,
   AuthenticatedLicenseRoute: AuthenticatedLicenseRoute,
   AuthenticatedLiveOptionTerminalRoute: AuthenticatedLiveOptionTerminalRoute,
   AuthenticatedMultiAssetIntelligenceRoute:
