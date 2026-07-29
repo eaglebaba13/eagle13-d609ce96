@@ -8,6 +8,8 @@ import type { LevelBundle } from "./level-bundle";
 import type { BiasResult } from "./market-bias";
 import type { PanchangBundle } from "./panchang-bundle";
 import type { MacroRatioResult } from "./macro-ratio";
+import type { InstitutionalIntelligenceSnapshot } from "@/lib/institutional-intelligence/types";
+import { renderInstitutionalIntelligenceBlock } from "@/lib/institutional-intelligence/morning-brief";
 
 export const MORNING_REPORT_VERSION = "morning-brief@44B.1";
 export const MORNING_REPORT_TYPE = "MORNING_BRIEF";
@@ -60,6 +62,7 @@ export interface ComposeInput {
   readonly ratio: MacroRatioResult;
   readonly indiaContext: IndiaContextBlock;
   readonly fiiDii: FiiDiiBlock;
+  readonly institutionalIntelligence?: InstitutionalIntelligenceSnapshot | null;
   readonly overallStatus: DataQuality;
 }
 
@@ -147,6 +150,13 @@ export function composeMorningReport(input: ComposeInput): readonly BriefSection
       protectFromTruncation: true },
     { id: "G_CONTEXT", title: "Market Context", body: contextBody },
     { id: "H_FIIDII", title: "FII / DII", body: fiiBody },
+    ...(input.institutionalIntelligence
+      ? [{
+          id: "I_INSTITUTIONAL",
+          title: "Institutional Intelligence",
+          body: renderInstitutionalIntelligenceBlock(input.institutionalIntelligence),
+        }]
+      : []),
     { id: "Z_DISCLAIMER", title: "Disclaimer", body: composeDisclaimerBlock(), protectFromTruncation: true },
   ];
 }
