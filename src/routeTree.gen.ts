@@ -9,14 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WatchlistRouteImport } from './routes/watchlist'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StrategyBuilderRouteImport } from './routes/strategy-builder'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as SignalAccuracyRouteImport } from './routes/signal-accuracy'
+import { Route as RiskCenterRouteImport } from './routes/risk-center'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ReleaseNotesRouteImport } from './routes/release-notes'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as OptionsChainRouteImport } from './routes/options-chain'
 import { Route as OptionsAnalyticsRouteImport } from './routes/options-analytics'
 import { Route as OptionStrategyRouteImport } from './routes/option-strategy'
@@ -91,6 +94,11 @@ import { Route as ApiPublicWebhooksRazorpayRouteImport } from './routes/api/publ
 import { Route as ApiPublicHooksMorningBriefRouteImport } from './routes/api/public/hooks/morning-brief'
 import { Route as AuthenticatedResearchLabRunsRunIdRouteImport } from './routes/_authenticated/research-lab.runs.$runId'
 
+const WatchlistRoute = WatchlistRouteImport.update({
+  id: '/watchlist',
+  path: '/watchlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -111,6 +119,11 @@ const SignalAccuracyRoute = SignalAccuracyRouteImport.update({
   path: '/signal-accuracy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RiskCenterRoute = RiskCenterRouteImport.update({
+  id: '/risk-center',
+  path: '/risk-center',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RiskRoute = RiskRouteImport.update({
   id: '/risk',
   path: '/risk',
@@ -129,6 +142,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OptionsChainRoute = OptionsChainRouteImport.update({
@@ -560,14 +578,17 @@ export interface FileRoutesByFullPath {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -642,14 +663,17 @@ export interface FileRoutesByTo {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -726,14 +750,17 @@ export interface FileRoutesById {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -810,14 +837,17 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
     | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/ai-market-assistant'
@@ -892,14 +922,17 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
     | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/ai-market-assistant'
@@ -975,14 +1008,17 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
     | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/ai-market-assistant'
@@ -1059,14 +1095,17 @@ export interface RootRouteChildren {
   OptionStrategyRoute: typeof OptionStrategyRoute
   OptionsAnalyticsRoute: typeof OptionsAnalyticsRoute
   OptionsChainRoute: typeof OptionsChainRoute
+  PortfolioRoute: typeof PortfolioRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ReleaseNotesRoute: typeof ReleaseNotesRoute
   RiskRoute: typeof RiskRoute
+  RiskCenterRoute: typeof RiskCenterRoute
   SignalAccuracyRoute: typeof SignalAccuracyRoute
   StatusRoute: typeof StatusRoute
   StrategyBuilderRoute: typeof StrategyBuilderRoute
   TermsRoute: typeof TermsRoute
+  WatchlistRoute: typeof WatchlistRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DevAstroAuditRoute: typeof DevAstroAuditRoute
@@ -1079,6 +1118,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/watchlist': {
+      id: '/watchlist'
+      path: '/watchlist'
+      fullPath: '/watchlist'
+      preLoaderRoute: typeof WatchlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -1107,6 +1153,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignalAccuracyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/risk-center': {
+      id: '/risk-center'
+      path: '/risk-center'
+      fullPath: '/risk-center'
+      preLoaderRoute: typeof RiskCenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/risk': {
       id: '/risk'
       path: '/risk'
@@ -1133,6 +1186,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/options-chain': {
@@ -1805,14 +1865,17 @@ const rootRouteChildren: RootRouteChildren = {
   OptionStrategyRoute: OptionStrategyRoute,
   OptionsAnalyticsRoute: OptionsAnalyticsRoute,
   OptionsChainRoute: OptionsChainRoute,
+  PortfolioRoute: PortfolioRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ReleaseNotesRoute: ReleaseNotesRoute,
   RiskRoute: RiskRoute,
+  RiskCenterRoute: RiskCenterRoute,
   SignalAccuracyRoute: SignalAccuracyRoute,
   StatusRoute: StatusRoute,
   StrategyBuilderRoute: StrategyBuilderRoute,
   TermsRoute: TermsRoute,
+  WatchlistRoute: WatchlistRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,

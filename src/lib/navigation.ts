@@ -98,6 +98,9 @@ export const NAV_REGISTRY: NavItem[] = [
   { id: "decision", label: "Decision", icon: Brain, to: "/decision", section: "MAIN", order: 60, desktopVisible: true, mobileVisible: true },
   { id: "ai-decision-center", label: "AI Decision Center", icon: Brain, to: "/ai-decision-center", section: "MAIN", order: 65, desktopVisible: true, mobileVisible: true },
   { id: "risk", label: "Risk", icon: ShieldCheck, to: "/risk", section: "MAIN", order: 70, desktopVisible: true, mobileVisible: true },
+  { id: "portfolio", label: "Portfolio", icon: LayoutDashboard, to: "/portfolio", section: "MAIN", order: 72, desktopVisible: true, mobileVisible: true },
+  { id: "watchlist", label: "Watchlist", icon: Target, to: "/watchlist", section: "MAIN", order: 74, desktopVisible: true, mobileVisible: true },
+  { id: "risk-center", label: "Risk Center", icon: ShieldCheck, to: "/risk-center", section: "MAIN", order: 76, desktopVisible: true, mobileVisible: true },
 
   // RESEARCH
   { id: "backtest", label: "Backtest", icon: History, to: "/backtest", section: "RESEARCH", order: 110, desktopVisible: true, mobileVisible: true },
