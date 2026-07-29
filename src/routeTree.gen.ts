@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WatchlistRouteImport } from './routes/watchlist'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StrategyBuilderRouteImport } from './routes/strategy-builder'
 import { Route as StatusRouteImport } from './routes/status'
@@ -92,6 +93,11 @@ import { Route as ApiPublicWebhooksRazorpayRouteImport } from './routes/api/publ
 import { Route as ApiPublicHooksMorningBriefRouteImport } from './routes/api/public/hooks/morning-brief'
 import { Route as AuthenticatedResearchLabRunsRunIdRouteImport } from './routes/_authenticated/research-lab.runs.$runId'
 
+const WatchlistRoute = WatchlistRouteImport.update({
+  id: '/watchlist',
+  path: '/watchlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -575,6 +581,7 @@ export interface FileRoutesByFullPath {
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -658,6 +665,7 @@ export interface FileRoutesByTo {
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -743,6 +751,7 @@ export interface FileRoutesById {
   '/status': typeof StatusRoute
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -828,6 +837,7 @@ export interface FileRouteTypes {
     | '/status'
     | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/ai-market-assistant'
@@ -911,6 +921,7 @@ export interface FileRouteTypes {
     | '/status'
     | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/ai-market-assistant'
@@ -995,6 +1006,7 @@ export interface FileRouteTypes {
     | '/status'
     | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/ai-market-assistant'
@@ -1080,6 +1092,7 @@ export interface RootRouteChildren {
   StatusRoute: typeof StatusRoute
   StrategyBuilderRoute: typeof StrategyBuilderRoute
   TermsRoute: typeof TermsRoute
+  WatchlistRoute: typeof WatchlistRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DevAstroAuditRoute: typeof DevAstroAuditRoute
@@ -1092,6 +1105,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/watchlist': {
+      id: '/watchlist'
+      path: '/watchlist'
+      fullPath: '/watchlist'
+      preLoaderRoute: typeof WatchlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -1834,6 +1854,7 @@ const rootRouteChildren: RootRouteChildren = {
   StatusRoute: StatusRoute,
   StrategyBuilderRoute: StrategyBuilderRoute,
   TermsRoute: TermsRoute,
+  WatchlistRoute: WatchlistRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
