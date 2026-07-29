@@ -35,6 +35,7 @@ import { Route as BrokerRouteImport } from './routes/broker'
 import { Route as BacktestRouteImport } from './routes/backtest'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AstroRouteImport } from './routes/astro'
+import { Route as AiDecisionCenterRouteImport } from './routes/ai-decision-center'
 import { Route as AbsoluteIntradayValidationRouteImport } from './routes/absolute-intraday-validation'
 import { Route as AbsoluteIntradayRouteImport } from './routes/absolute-intraday'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -216,6 +217,11 @@ const AuthRoute = AuthRouteImport.update({
 const AstroRoute = AstroRouteImport.update({
   id: '/astro',
   path: '/astro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiDecisionCenterRoute = AiDecisionCenterRouteImport.update({
+  id: '/ai-decision-center',
+  path: '/ai-decision-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AbsoluteIntradayValidationRoute =
@@ -521,6 +527,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/absolute-intraday': typeof AbsoluteIntradayRoute
   '/absolute-intraday-validation': typeof AbsoluteIntradayValidationRoute
+  '/ai-decision-center': typeof AiDecisionCenterRoute
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
@@ -600,6 +607,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/absolute-intraday': typeof AbsoluteIntradayRoute
   '/absolute-intraday-validation': typeof AbsoluteIntradayValidationRoute
+  '/ai-decision-center': typeof AiDecisionCenterRoute
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
@@ -681,6 +689,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/absolute-intraday': typeof AbsoluteIntradayRoute
   '/absolute-intraday-validation': typeof AbsoluteIntradayValidationRoute
+  '/ai-decision-center': typeof AiDecisionCenterRoute
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
@@ -762,6 +771,7 @@ export interface FileRouteTypes {
     | '/'
     | '/absolute-intraday'
     | '/absolute-intraday-validation'
+    | '/ai-decision-center'
     | '/astro'
     | '/auth'
     | '/backtest'
@@ -841,6 +851,7 @@ export interface FileRouteTypes {
     | '/'
     | '/absolute-intraday'
     | '/absolute-intraday-validation'
+    | '/ai-decision-center'
     | '/astro'
     | '/auth'
     | '/backtest'
@@ -921,6 +932,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/absolute-intraday'
     | '/absolute-intraday-validation'
+    | '/ai-decision-center'
     | '/astro'
     | '/auth'
     | '/backtest'
@@ -1002,6 +1014,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AbsoluteIntradayRoute: typeof AbsoluteIntradayRoute
   AbsoluteIntradayValidationRoute: typeof AbsoluteIntradayValidationRoute
+  AiDecisionCenterRoute: typeof AiDecisionCenterRoute
   AstroRoute: typeof AstroRoute
   AuthRoute: typeof AuthRoute
   BacktestRoute: typeof BacktestRoute
@@ -1220,6 +1233,13 @@ declare module '@tanstack/react-router' {
       path: '/astro'
       fullPath: '/astro'
       preLoaderRoute: typeof AstroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-decision-center': {
+      id: '/ai-decision-center'
+      path: '/ai-decision-center'
+      fullPath: '/ai-decision-center'
+      preLoaderRoute: typeof AiDecisionCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/absolute-intraday-validation': {
@@ -1724,6 +1744,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AbsoluteIntradayRoute: AbsoluteIntradayRoute,
   AbsoluteIntradayValidationRoute: AbsoluteIntradayValidationRoute,
+  AiDecisionCenterRoute: AiDecisionCenterRoute,
   AstroRoute: AstroRoute,
   AuthRoute: AuthRoute,
   BacktestRoute: BacktestRoute,
