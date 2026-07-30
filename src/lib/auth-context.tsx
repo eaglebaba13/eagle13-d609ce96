@@ -12,6 +12,28 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { highestRole, type AppRole } from "./roles";
 import { serializeProfile, type ProfileRow, type SerializedProfile } from "./profile";
+import {
+  clientLocalBypassActive,
+  LOCAL_DEV_DISPLAY_NAME,
+  LOCAL_DEV_EMAIL,
+  LOCAL_DEV_ROLE,
+  LOCAL_DEV_USER_ID,
+} from "./local-dev-auth";
+
+const LOCAL_DEV_PROFILE: SerializedProfile = {
+  id: LOCAL_DEV_USER_ID,
+  email: LOCAL_DEV_EMAIL,
+  displayName: LOCAL_DEV_DISPLAY_NAME,
+  avatarUrl: null,
+  timezone: "Asia/Kolkata",
+  country: "IN",
+  currency: "INR",
+  preferredBroker: null,
+  preferredInstrument: "NIFTY",
+  language: "en",
+  theme: "dark",
+  role: LOCAL_DEV_ROLE,
+};
 
 interface AuthContextValue {
   loading: boolean;
@@ -21,6 +43,8 @@ interface AuthContextValue {
   roles: AppRole[];
   role: AppRole;
   isAuthenticated: boolean;
+  /** True only on localhost during development (Phase 52D). */
+  localDevBypass: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   logAudit: (event: string, metadata?: Record<string, unknown>) => Promise<void>;
@@ -33,6 +57,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<SerializedProfile | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
+  // Resolved after mount so SSR and the first client render agree.
+  const [localDevBypass, setLocalDevBypass] = useState(false);
   const lastEvent = useRef<string | null>(null);
 
   const loadProfileAndRoles = useCallback(async (userId: string) => {
@@ -52,6 +78,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+
+    if (clientLocalBypassActive()) {
+      setLocalDevBypass(true);
+      setLoading(false);
+      return () => {
+        mounted = false;
+      };
+    }
 
     // 1. Wire the listener FIRST so we don't miss the initial event.
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
@@ -137,13 +171,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const value: AuthContextValue = {
-    loading,
+    loading: localDevBypass ? false : loading,
     session,
     user: session?.user ?? null,
-    profile,
-    roles,
-    role,
-    isAuthenticated: !!session?.user,
+    profile: localDevBypass ? LOCAL_DEV_PROFILE : profile,
+    roles: localDevBypass ? [LOCAL_DEV_ROLE] : roles,
+    role: localDevBypass ? LOCAL_DEV_ROLE : role,
+    isAuthenticated: localDevBypass ? true : !!session?.user,
+    localDevBypass,
     signOut,
     refreshProfile,
     logAudit,

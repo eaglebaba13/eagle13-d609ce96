@@ -5,7 +5,7 @@
 // happens in `services/tradingview-ratio-collector/`.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import type { CollectorSnapshot } from "./snapshot-contract";
 import { buildSnapshot } from "./snapshot-contract";
 

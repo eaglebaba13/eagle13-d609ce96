@@ -6,7 +6,7 @@
 // No broker, no execution, no changes to existing cache keys.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import type { OptionUnderlying, OptionChainSnapshot } from "../option-chain/types";
 import type { AtmMode } from "../option-chain/atm-engine";
 import type { OptionChainCapability } from "../option-chain/capability";

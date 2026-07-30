@@ -9,7 +9,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import type { BillingCycle, BillingProviderHealth } from "./razorpay-plan-map";
 import { PLAN_IDS, type PlanId } from "./plans";
 

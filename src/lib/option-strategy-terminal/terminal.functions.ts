@@ -7,7 +7,7 @@
 // and feeds them into the deterministic strategy engine.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 
 import { getDecisionSnapshot } from "@/lib/decision.functions";
 import { getGtiSummary } from "@/lib/gti-summary/gti-summary.functions";

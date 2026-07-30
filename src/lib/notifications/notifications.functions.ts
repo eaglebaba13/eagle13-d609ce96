@@ -1,7 +1,7 @@
 // Phase 44 — Server functions for the Notification Center.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import type { NotificationRow, NotificationType } from "./types";
 
 export interface ListNotificationsInput {
