@@ -10,7 +10,7 @@ import { ROLE_LABELS } from "@/lib/roles";
  * for signed-in users.
  */
 export function ProfileMenu() {
-  const { isAuthenticated, profile, role, signOut, loading } = useAuth();
+  const { isAuthenticated, profile, role, signOut, loading, localDevBypass } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -56,6 +56,12 @@ export function ProfileMenu() {
         <span className="hidden sm:inline text-xs font-medium max-w-[100px] truncate">{label}</span>
       </button>
 
+      {localDevBypass && (
+        <span className="ml-2 hidden md:inline rounded-full border border-amber-500/40 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-amber-500">
+          LOCAL DEV
+        </span>
+      )}
+
       {open && (
         <div
           role="menu"
@@ -63,11 +69,18 @@ export function ProfileMenu() {
         >
           <div className="px-4 py-3 border-b border-border">
             <div className="text-sm font-medium truncate">{profile?.email}</div>
-            <div className="text-xs text-muted-foreground">{ROLE_LABELS[role]} plan</div>
+            <div className="text-xs text-muted-foreground">
+              {localDevBypass ? "Local development bypass" : `${ROLE_LABELS[role]} plan`}
+            </div>
           </div>
           <MenuItem to="/profile" onClick={() => setOpen(false)}>Profile</MenuItem>
           <MenuItem to="/settings" onClick={() => setOpen(false)}>Settings</MenuItem>
           <MenuItem to="/license" onClick={() => setOpen(false)}>License</MenuItem>
+          {localDevBypass ? (
+            <div className="px-4 py-2 text-sm text-muted-foreground">
+              Sign out disabled (local dev)
+            </div>
+          ) : (
           <button
             type="button"
             onClick={async () => {
@@ -79,6 +92,7 @@ export function ProfileMenu() {
           >
             Sign out
           </button>
+          )}
         </div>
       )}
     </div>

@@ -3,7 +3,7 @@
  * report; a real staging harness injects probes and journey resolvers.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import type { StagingValidationReport } from "./staging-validation-types";
 import { composeStagingReport } from "./staging-report";
 import { DEFAULT_ALLOWED_HOSTS, validateStagingConfig } from "./staging-config.server";

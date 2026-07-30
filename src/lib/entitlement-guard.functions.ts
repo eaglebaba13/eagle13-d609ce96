@@ -8,7 +8,7 @@
  */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import { PLANS, planForRole, type Capability, type PlanId, type SubscriptionStatus } from "./plans";
 import type { AppRole } from "./roles";
 

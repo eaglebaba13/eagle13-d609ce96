@@ -2,7 +2,7 @@
 // Read-only, per-user auth. Never returns tokens or raw upstream bodies.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import type { OptionUnderlying } from "./types";
 
 export interface GetOptionChainInput {

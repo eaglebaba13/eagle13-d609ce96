@@ -7,7 +7,7 @@
 // research page is always testable — never labelled live.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import { buildMockBreadthBundle, type MockScenario } from "./mock-provider";
 import { evaluateVixRegime } from "./vix-regime";
 import { adaptPcrConfirmation } from "./pcr-confirmation";

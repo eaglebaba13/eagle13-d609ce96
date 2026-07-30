@@ -3,7 +3,7 @@
 // reads use RLS-scoped selects. No SQL is duplicated here.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import { GANN_GAP_CONFIG_VERSION, GANN_GAP_FORMULA_VERSION } from "./formula-version";
 import { OUTCOME_RULE_VERSION, classifyActualOutcome } from "./outcome-rules";
 import {
