@@ -506,11 +506,11 @@ export const getDecisionSnapshot = createServerFn({ method: "GET" }).handler(
               },
             },
             summary: {
-              action: summary.action,
+              action: summary.decision,
               confidence: summary.confidence,
               risk: summary.risk,
-              present: summary.present,
-              total: summary.total,
+              present: summary.moduleCoverage.present,
+              total: summary.moduleCoverage.total,
             },
             formulaVersions: {
               astro: DEFAULT_ASTRO_FORMULA_VERSION,

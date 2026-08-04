@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 
 export type ProviderCredentialKind = "upstox" | "telegram" | "coindcx" | "future";
@@ -474,6 +475,18 @@ export const getProviderCredentialSettings = createServerFn({ method: "GET" })
 
 export const saveProviderCredentialSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        provider: z.enum(["upstox", "telegram", "coindcx", "future"]),
+        credentialType: z.enum(["api_key", "api_secret", "access_token", "bot_token", "chat_id"]),
+        value: z.string(),
+        enabled: z.boolean().optional(),
+        expiresAt: z.string().nullable().optional(),
+        storage: z.enum(["ENV", "DATABASE", "CACHE"]).optional(),
+      })
+      .parse(data),
+  )
   .handler(async ({ context, data }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
@@ -481,9 +494,8 @@ export const saveProviderCredentialSettings = createServerFn({ method: "POST" })
     });
     if (!isAdmin) throw new Error("forbidden");
 
-    const payload = data as unknown as SaveProviderCredentialInput;
     const saved = await saveProviderCredentialSetting({
-      ...payload,
+      ...data,
       updatedBy: context.userId,
     });
     return sanitizeProviderCredentialSettingForClient(saved);
@@ -491,6 +503,14 @@ export const saveProviderCredentialSettings = createServerFn({ method: "POST" })
 
 export const testProviderCredentialSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        provider: z.enum(["upstox", "telegram", "coindcx", "future"]),
+        credentialType: z.enum(["api_key", "api_secret", "access_token", "bot_token", "chat_id"]),
+      })
+      .parse(data),
+  )
   .handler(async ({ context, data }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
@@ -498,10 +518,9 @@ export const testProviderCredentialSettings = createServerFn({ method: "POST" })
     });
     if (!isAdmin) throw new Error("forbidden");
 
-    const payload = data as unknown as { provider: ProviderCredentialKind; credentialType: ProviderCredentialType };
     const validation = await validateProviderCredentialConnection({
-      provider: payload.provider,
-      credentialType: payload.credentialType,
+      provider: data.provider,
+      credentialType: data.credentialType,
       capability: "admin-validation",
     });
     return {
@@ -513,6 +532,14 @@ export const testProviderCredentialSettings = createServerFn({ method: "POST" })
 
 export const disconnectProviderCredentialSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        provider: z.enum(["upstox", "telegram", "coindcx", "future"]),
+        credentialType: z.enum(["api_key", "api_secret", "access_token", "bot_token", "chat_id"]),
+      })
+      .parse(data),
+  )
   .handler(async ({ context, data }) => {
     const { data: isAdmin } = await context.supabase.rpc("has_role", {
       _user_id: context.userId,
@@ -520,9 +547,8 @@ export const disconnectProviderCredentialSettings = createServerFn({ method: "PO
     });
     if (!isAdmin) throw new Error("forbidden");
 
-    const payload = data as unknown as DisconnectProviderCredentialInput;
     const disconnected = await disconnectProviderCredentialSetting({
-      ...payload,
+      ...data,
       updatedBy: context.userId,
     });
     return sanitizeProviderCredentialSettingForClient(disconnected);
