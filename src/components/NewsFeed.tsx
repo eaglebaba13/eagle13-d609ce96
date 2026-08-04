@@ -1,4 +1,4 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { getMarketNews, type NewsItem } from "@/lib/news.functions";
 
@@ -98,8 +98,12 @@ function NewsRow({ item }: { item: NewsItem }) {
 }
 
 export function NewsFeed() {
-  const { data, isFetching } = useSuspenseQuery(newsQuery());
-  const announcement = useNewsAnnouncement(data.items);
+  // Non-suspending on purpose: a slow upstream news feed must never hold the
+  // SSR stream open (previously caused "SSR stream transform exceeded maximum
+  // lifetime"). The feed hydrates and fills in on the client.
+  const { data, isFetching } = useQuery(newsQuery());
+  const items: NewsItem[] = data?.items ?? [];
+  const announcement = useNewsAnnouncement(items);
   return (
     <section
       aria-label="Live market news"
@@ -145,12 +149,12 @@ export function NewsFeed() {
         </span>
       </div>
       <div style={{ padding: "6px 14px", maxHeight: 460, overflowY: "auto" }}>
-        {data.items.length === 0 ? (
+        {items.length === 0 ? (
           <div style={{ padding: 16, fontSize: 12, color: "var(--eb-muted)", fontFamily: "var(--eb-mono)" }}>
-            No recent headlines available.
+            {isFetching || !data ? "Loading market news…" : "No recent headlines available."}
           </div>
         ) : (
-          data.items.map((it) => <NewsRow key={it.link + it.title} item={it} />)
+          items.map((it) => <NewsRow key={it.link + it.title} item={it} />)
         )}
       </div>
       {/* Screen-reader-only live region: announces new headlines without moving focus. */}
