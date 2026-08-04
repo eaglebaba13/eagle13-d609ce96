@@ -50,8 +50,17 @@ describe("provider diagnostics wiring", () => {
     expect(report.realProviderActive).toBe(true);
     expect(report.mockActive).toBe(false);
     expect(report.providerSelected).toBe(UPSTOX_ADAPTER_ID);
+    expect(report.credentialSource).toBe("ENV");
     expect(report.diagnostics.wirings.map((w) => w.primary)).toEqual([UPSTOX_ADAPTER_ID, UPSTOX_ADAPTER_ID]);
     expect(JSON.stringify(report)).not.toContain("primary-mock");
+  });
+
+  it("reports the canonical database credential source in production", async () => {
+    const report = await buildProviderDiagnosticsReport({
+      nowIso: "2026-07-16T09:15:00.000Z",
+    });
+
+    expect(["ENV", "DATABASE", "CACHE"]).toContain(report.credentialSource);
   });
 
   it("does NOT silently fall back to mock when live mode is set but credentials are missing", async () => {

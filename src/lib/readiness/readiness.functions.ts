@@ -3,7 +3,7 @@
  * composes a `ProductionReadinessReport`. Never emits raw secret values.
  */
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import {
   auditEnvironment,
   CORE_REQUIRED_ENV,

@@ -9,13 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WatchlistRouteImport } from './routes/watchlist'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as StrategyBuilderRouteImport } from './routes/strategy-builder'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as SignalAccuracyRouteImport } from './routes/signal-accuracy'
+import { Route as RiskCenterRouteImport } from './routes/risk-center'
 import { Route as RiskRouteImport } from './routes/risk'
 import { Route as ReleaseNotesRouteImport } from './routes/release-notes'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as OptionsChainRouteImport } from './routes/options-chain'
 import { Route as OptionsAnalyticsRouteImport } from './routes/options-analytics'
 import { Route as OptionStrategyRouteImport } from './routes/option-strategy'
@@ -23,6 +27,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MarketReplayRouteImport } from './routes/market-replay'
 import { Route as MarketBreadthRouteImport } from './routes/market-breadth'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LiveTerminalRouteImport } from './routes/live-terminal'
 import { Route as LiveMarketTerminalRouteImport } from './routes/live-market-terminal'
 import { Route as LiveLevelsRouteImport } from './routes/live-levels'
@@ -31,9 +36,11 @@ import { Route as DecisionRouteImport } from './routes/decision'
 import { Route as CryptoRouteImport } from './routes/crypto'
 import { Route as CombinedPcrRouteImport } from './routes/combined-pcr'
 import { Route as BrokerRouteImport } from './routes/broker'
+import { Route as BacktestingLabRouteImport } from './routes/backtesting-lab'
 import { Route as BacktestRouteImport } from './routes/backtest'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AstroRouteImport } from './routes/astro'
+import { Route as AiDecisionCenterRouteImport } from './routes/ai-decision-center'
 import { Route as AbsoluteIntradayValidationRouteImport } from './routes/absolute-intraday-validation'
 import { Route as AbsoluteIntradayRouteImport } from './routes/absolute-intraday'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -75,6 +82,8 @@ import { Route as AuthenticatedAdminResearchLabRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 import { Route as AuthenticatedAdminReadinessRouteImport } from './routes/_authenticated/admin.readiness'
 import { Route as AuthenticatedAdminProvidersRouteImport } from './routes/_authenticated/admin.providers'
+import { Route as AuthenticatedAdminProviderSettingsRouteImport } from './routes/_authenticated/admin.provider-settings'
+import { Route as AuthenticatedAdminProviderHealthRouteImport } from './routes/_authenticated/admin.provider-health'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminLaunchReadinessRouteImport } from './routes/_authenticated/admin.launch-readiness'
 import { Route as AuthenticatedAdminInstitutionalFlowRouteImport } from './routes/_authenticated/admin.institutional-flow'
@@ -87,9 +96,19 @@ import { Route as ApiPublicWebhooksRazorpayRouteImport } from './routes/api/publ
 import { Route as ApiPublicHooksMorningBriefRouteImport } from './routes/api/public/hooks/morning-brief'
 import { Route as AuthenticatedResearchLabRunsRunIdRouteImport } from './routes/_authenticated/research-lab.runs.$runId'
 
+const WatchlistRoute = WatchlistRouteImport.update({
+  id: '/watchlist',
+  path: '/watchlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StrategyBuilderRoute = StrategyBuilderRouteImport.update({
+  id: '/strategy-builder',
+  path: '/strategy-builder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatusRoute = StatusRouteImport.update({
@@ -100,6 +119,11 @@ const StatusRoute = StatusRouteImport.update({
 const SignalAccuracyRoute = SignalAccuracyRouteImport.update({
   id: '/signal-accuracy',
   path: '/signal-accuracy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RiskCenterRoute = RiskCenterRouteImport.update({
+  id: '/risk-center',
+  path: '/risk-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RiskRoute = RiskRouteImport.update({
@@ -120,6 +144,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioRoute = PortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OptionsChainRoute = OptionsChainRouteImport.update({
@@ -155,6 +184,11 @@ const MarketReplayRoute = MarketReplayRouteImport.update({
 const MarketBreadthRoute = MarketBreadthRouteImport.update({
   id: '/market-breadth',
   path: '/market-breadth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LiveTerminalRoute = LiveTerminalRouteImport.update({
@@ -197,6 +231,11 @@ const BrokerRoute = BrokerRouteImport.update({
   path: '/broker',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BacktestingLabRoute = BacktestingLabRouteImport.update({
+  id: '/backtesting-lab',
+  path: '/backtesting-lab',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BacktestRoute = BacktestRouteImport.update({
   id: '/backtest',
   path: '/backtest',
@@ -210,6 +249,11 @@ const AuthRoute = AuthRouteImport.update({
 const AstroRoute = AstroRouteImport.update({
   id: '/astro',
   path: '/astro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiDecisionCenterRoute = AiDecisionCenterRouteImport.update({
+  id: '/ai-decision-center',
+  path: '/ai-decision-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AbsoluteIntradayValidationRoute =
@@ -444,6 +488,18 @@ const AuthenticatedAdminProvidersRoute =
     path: '/admin/providers',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminProviderSettingsRoute =
+  AuthenticatedAdminProviderSettingsRouteImport.update({
+    id: '/admin/provider-settings',
+    path: '/admin/provider-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminProviderHealthRoute =
+  AuthenticatedAdminProviderHealthRouteImport.update({
+    id: '/admin/provider-health',
+    path: '/admin/provider-health',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminPaymentsRoute =
   AuthenticatedAdminPaymentsRouteImport.update({
     id: '/admin/payments',
@@ -515,9 +571,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/absolute-intraday': typeof AbsoluteIntradayRoute
   '/absolute-intraday-validation': typeof AbsoluteIntradayValidationRoute
+  '/ai-decision-center': typeof AiDecisionCenterRoute
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -526,6 +584,7 @@ export interface FileRoutesByFullPath {
   '/live-levels': typeof LiveLevelsRoute
   '/live-market-terminal': typeof LiveMarketTerminalRoute
   '/live-terminal': typeof LiveTerminalRoute
+  '/login': typeof LoginRoute
   '/market-breadth': typeof MarketBreadthRoute
   '/market-replay': typeof MarketReplayRoute
   '/mcp': typeof McpRoute
@@ -533,13 +592,17 @@ export interface FileRoutesByFullPath {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -572,6 +635,8 @@ export interface FileRoutesByFullPath {
   '/admin/institutional-flow': typeof AuthenticatedAdminInstitutionalFlowRoute
   '/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
+  '/admin/provider-settings': typeof AuthenticatedAdminProviderSettingsRoute
   '/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -593,9 +658,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/absolute-intraday': typeof AbsoluteIntradayRoute
   '/absolute-intraday-validation': typeof AbsoluteIntradayValidationRoute
+  '/ai-decision-center': typeof AiDecisionCenterRoute
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -604,6 +671,7 @@ export interface FileRoutesByTo {
   '/live-levels': typeof LiveLevelsRoute
   '/live-market-terminal': typeof LiveMarketTerminalRoute
   '/live-terminal': typeof LiveTerminalRoute
+  '/login': typeof LoginRoute
   '/market-breadth': typeof MarketBreadthRoute
   '/market-replay': typeof MarketReplayRoute
   '/mcp': typeof McpRoute
@@ -611,13 +679,17 @@ export interface FileRoutesByTo {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -650,6 +722,8 @@ export interface FileRoutesByTo {
   '/admin/institutional-flow': typeof AuthenticatedAdminInstitutionalFlowRoute
   '/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
+  '/admin/provider-settings': typeof AuthenticatedAdminProviderSettingsRoute
   '/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -673,9 +747,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/absolute-intraday': typeof AbsoluteIntradayRoute
   '/absolute-intraday-validation': typeof AbsoluteIntradayValidationRoute
+  '/ai-decision-center': typeof AiDecisionCenterRoute
   '/astro': typeof AstroRoute
   '/auth': typeof AuthRoute
   '/backtest': typeof BacktestRoute
+  '/backtesting-lab': typeof BacktestingLabRoute
   '/broker': typeof BrokerRoute
   '/combined-pcr': typeof CombinedPcrRoute
   '/crypto': typeof CryptoRouteWithChildren
@@ -684,6 +760,7 @@ export interface FileRoutesById {
   '/live-levels': typeof LiveLevelsRoute
   '/live-market-terminal': typeof LiveMarketTerminalRoute
   '/live-terminal': typeof LiveTerminalRoute
+  '/login': typeof LoginRoute
   '/market-breadth': typeof MarketBreadthRoute
   '/market-replay': typeof MarketReplayRoute
   '/mcp': typeof McpRoute
@@ -691,13 +768,17 @@ export interface FileRoutesById {
   '/option-strategy': typeof OptionStrategyRoute
   '/options-analytics': typeof OptionsAnalyticsRoute
   '/options-chain': typeof OptionsChainRoute
+  '/portfolio': typeof PortfolioRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/release-notes': typeof ReleaseNotesRoute
   '/risk': typeof RiskRoute
+  '/risk-center': typeof RiskCenterRoute
   '/signal-accuracy': typeof SignalAccuracyRoute
   '/status': typeof StatusRoute
+  '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
+  '/watchlist': typeof WatchlistRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
@@ -730,6 +811,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/institutional-flow': typeof AuthenticatedAdminInstitutionalFlowRoute
   '/_authenticated/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
+  '/_authenticated/admin/provider-settings': typeof AuthenticatedAdminProviderSettingsRoute
   '/_authenticated/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/_authenticated/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -753,9 +836,11 @@ export interface FileRouteTypes {
     | '/'
     | '/absolute-intraday'
     | '/absolute-intraday-validation'
+    | '/ai-decision-center'
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -764,6 +849,7 @@ export interface FileRouteTypes {
     | '/live-levels'
     | '/live-market-terminal'
     | '/live-terminal'
+    | '/login'
     | '/market-breadth'
     | '/market-replay'
     | '/mcp'
@@ -771,13 +857,17 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/ai-market-assistant'
@@ -810,6 +900,8 @@ export interface FileRouteTypes {
     | '/admin/institutional-flow'
     | '/admin/launch-readiness'
     | '/admin/payments'
+    | '/admin/provider-health'
+    | '/admin/provider-settings'
     | '/admin/providers'
     | '/admin/readiness'
     | '/admin/referrals'
@@ -831,9 +923,11 @@ export interface FileRouteTypes {
     | '/'
     | '/absolute-intraday'
     | '/absolute-intraday-validation'
+    | '/ai-decision-center'
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -842,6 +936,7 @@ export interface FileRouteTypes {
     | '/live-levels'
     | '/live-market-terminal'
     | '/live-terminal'
+    | '/login'
     | '/market-breadth'
     | '/market-replay'
     | '/mcp'
@@ -849,13 +944,17 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/ai-market-assistant'
@@ -888,6 +987,8 @@ export interface FileRouteTypes {
     | '/admin/institutional-flow'
     | '/admin/launch-readiness'
     | '/admin/payments'
+    | '/admin/provider-health'
+    | '/admin/provider-settings'
     | '/admin/providers'
     | '/admin/readiness'
     | '/admin/referrals'
@@ -910,9 +1011,11 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/absolute-intraday'
     | '/absolute-intraday-validation'
+    | '/ai-decision-center'
     | '/astro'
     | '/auth'
     | '/backtest'
+    | '/backtesting-lab'
     | '/broker'
     | '/combined-pcr'
     | '/crypto'
@@ -921,6 +1024,7 @@ export interface FileRouteTypes {
     | '/live-levels'
     | '/live-market-terminal'
     | '/live-terminal'
+    | '/login'
     | '/market-breadth'
     | '/market-replay'
     | '/mcp'
@@ -928,13 +1032,17 @@ export interface FileRouteTypes {
     | '/option-strategy'
     | '/options-analytics'
     | '/options-chain'
+    | '/portfolio'
     | '/pricing'
     | '/privacy'
     | '/release-notes'
     | '/risk'
+    | '/risk-center'
     | '/signal-accuracy'
     | '/status'
+    | '/strategy-builder'
     | '/terms'
+    | '/watchlist'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/ai-market-assistant'
@@ -967,6 +1075,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/institutional-flow'
     | '/_authenticated/admin/launch-readiness'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/provider-health'
+    | '/_authenticated/admin/provider-settings'
     | '/_authenticated/admin/providers'
     | '/_authenticated/admin/readiness'
     | '/_authenticated/admin/referrals'
@@ -990,9 +1100,11 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AbsoluteIntradayRoute: typeof AbsoluteIntradayRoute
   AbsoluteIntradayValidationRoute: typeof AbsoluteIntradayValidationRoute
+  AiDecisionCenterRoute: typeof AiDecisionCenterRoute
   AstroRoute: typeof AstroRoute
   AuthRoute: typeof AuthRoute
   BacktestRoute: typeof BacktestRoute
+  BacktestingLabRoute: typeof BacktestingLabRoute
   BrokerRoute: typeof BrokerRoute
   CombinedPcrRoute: typeof CombinedPcrRoute
   CryptoRoute: typeof CryptoRouteWithChildren
@@ -1001,6 +1113,7 @@ export interface RootRouteChildren {
   LiveLevelsRoute: typeof LiveLevelsRoute
   LiveMarketTerminalRoute: typeof LiveMarketTerminalRoute
   LiveTerminalRoute: typeof LiveTerminalRoute
+  LoginRoute: typeof LoginRoute
   MarketBreadthRoute: typeof MarketBreadthRoute
   MarketReplayRoute: typeof MarketReplayRoute
   McpRoute: typeof McpRoute
@@ -1008,13 +1121,17 @@ export interface RootRouteChildren {
   OptionStrategyRoute: typeof OptionStrategyRoute
   OptionsAnalyticsRoute: typeof OptionsAnalyticsRoute
   OptionsChainRoute: typeof OptionsChainRoute
+  PortfolioRoute: typeof PortfolioRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   ReleaseNotesRoute: typeof ReleaseNotesRoute
   RiskRoute: typeof RiskRoute
+  RiskCenterRoute: typeof RiskCenterRoute
   SignalAccuracyRoute: typeof SignalAccuracyRoute
   StatusRoute: typeof StatusRoute
+  StrategyBuilderRoute: typeof StrategyBuilderRoute
   TermsRoute: typeof TermsRoute
+  WatchlistRoute: typeof WatchlistRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DevAstroAuditRoute: typeof DevAstroAuditRoute
@@ -1027,11 +1144,25 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/watchlist': {
+      id: '/watchlist'
+      path: '/watchlist'
+      fullPath: '/watchlist'
+      preLoaderRoute: typeof WatchlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strategy-builder': {
+      id: '/strategy-builder'
+      path: '/strategy-builder'
+      fullPath: '/strategy-builder'
+      preLoaderRoute: typeof StrategyBuilderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/status': {
@@ -1046,6 +1177,13 @@ declare module '@tanstack/react-router' {
       path: '/signal-accuracy'
       fullPath: '/signal-accuracy'
       preLoaderRoute: typeof SignalAccuracyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/risk-center': {
+      id: '/risk-center'
+      path: '/risk-center'
+      fullPath: '/risk-center'
+      preLoaderRoute: typeof RiskCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/risk': {
@@ -1074,6 +1212,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio': {
+      id: '/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/options-chain': {
@@ -1123,6 +1268,13 @@ declare module '@tanstack/react-router' {
       path: '/market-breadth'
       fullPath: '/market-breadth'
       preLoaderRoute: typeof MarketBreadthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/live-terminal': {
@@ -1181,6 +1333,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrokerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/backtesting-lab': {
+      id: '/backtesting-lab'
+      path: '/backtesting-lab'
+      fullPath: '/backtesting-lab'
+      preLoaderRoute: typeof BacktestingLabRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/backtest': {
       id: '/backtest'
       path: '/backtest'
@@ -1200,6 +1359,13 @@ declare module '@tanstack/react-router' {
       path: '/astro'
       fullPath: '/astro'
       preLoaderRoute: typeof AstroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-decision-center': {
+      id: '/ai-decision-center'
+      path: '/ai-decision-center'
+      fullPath: '/ai-decision-center'
+      preLoaderRoute: typeof AiDecisionCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/absolute-intraday-validation': {
@@ -1489,6 +1655,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProvidersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/provider-settings': {
+      id: '/_authenticated/admin/provider-settings'
+      path: '/admin/provider-settings'
+      fullPath: '/admin/provider-settings'
+      preLoaderRoute: typeof AuthenticatedAdminProviderSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/provider-health': {
+      id: '/_authenticated/admin/provider-health'
+      path: '/admin/provider-health'
+      fullPath: '/admin/provider-health'
+      preLoaderRoute: typeof AuthenticatedAdminProviderHealthRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/payments': {
       id: '/_authenticated/admin/payments'
       path: '/admin/payments'
@@ -1634,6 +1814,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminInstitutionalFlowRoute: typeof AuthenticatedAdminInstitutionalFlowRoute
   AuthenticatedAdminLaunchReadinessRoute: typeof AuthenticatedAdminLaunchReadinessRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminProviderHealthRoute: typeof AuthenticatedAdminProviderHealthRoute
+  AuthenticatedAdminProviderSettingsRoute: typeof AuthenticatedAdminProviderSettingsRoute
   AuthenticatedAdminProvidersRoute: typeof AuthenticatedAdminProvidersRoute
   AuthenticatedAdminReadinessRoute: typeof AuthenticatedAdminReadinessRoute
   AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
@@ -1674,6 +1856,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminLaunchReadinessRoute:
     AuthenticatedAdminLaunchReadinessRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+  AuthenticatedAdminProviderHealthRoute: AuthenticatedAdminProviderHealthRoute,
+  AuthenticatedAdminProviderSettingsRoute:
+    AuthenticatedAdminProviderSettingsRoute,
   AuthenticatedAdminProvidersRoute: AuthenticatedAdminProvidersRoute,
   AuthenticatedAdminReadinessRoute: AuthenticatedAdminReadinessRoute,
   AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
@@ -1704,9 +1889,11 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AbsoluteIntradayRoute: AbsoluteIntradayRoute,
   AbsoluteIntradayValidationRoute: AbsoluteIntradayValidationRoute,
+  AiDecisionCenterRoute: AiDecisionCenterRoute,
   AstroRoute: AstroRoute,
   AuthRoute: AuthRoute,
   BacktestRoute: BacktestRoute,
+  BacktestingLabRoute: BacktestingLabRoute,
   BrokerRoute: BrokerRoute,
   CombinedPcrRoute: CombinedPcrRoute,
   CryptoRoute: CryptoRouteWithChildren,
@@ -1715,6 +1902,7 @@ const rootRouteChildren: RootRouteChildren = {
   LiveLevelsRoute: LiveLevelsRoute,
   LiveMarketTerminalRoute: LiveMarketTerminalRoute,
   LiveTerminalRoute: LiveTerminalRoute,
+  LoginRoute: LoginRoute,
   MarketBreadthRoute: MarketBreadthRoute,
   MarketReplayRoute: MarketReplayRoute,
   McpRoute: McpRoute,
@@ -1722,13 +1910,17 @@ const rootRouteChildren: RootRouteChildren = {
   OptionStrategyRoute: OptionStrategyRoute,
   OptionsAnalyticsRoute: OptionsAnalyticsRoute,
   OptionsChainRoute: OptionsChainRoute,
+  PortfolioRoute: PortfolioRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   ReleaseNotesRoute: ReleaseNotesRoute,
   RiskRoute: RiskRoute,
+  RiskCenterRoute: RiskCenterRoute,
   SignalAccuracyRoute: SignalAccuracyRoute,
   StatusRoute: StatusRoute,
+  StrategyBuilderRoute: StrategyBuilderRoute,
   TermsRoute: TermsRoute,
+  WatchlistRoute: WatchlistRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,

@@ -3,7 +3,7 @@
 // the screenshot proof uploaded under `{user_id}/referrals/...`.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 
 const BUCKET = "payment-proofs";
 const EXPIRES_IN = 5 * 60; // 5 minutes

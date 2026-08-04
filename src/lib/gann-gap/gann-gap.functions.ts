@@ -3,7 +3,7 @@
 // provider connection. Feature-flagged and idempotent per session.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import { findFeatureFlag } from "@/lib/feature-flags";
 import { DEFAULT_GANN_GAP_CONFIG } from "./config";
 import { GANN_GAP_CONFIG_VERSION, GANN_GAP_FORMULA_VERSION } from "./formula-version";

@@ -96,6 +96,15 @@ function fail(cap: ReplayCapability, reason: string, base: Partial<ReplayResult>
   return { ...EMPTY, ...base, capability: cap, reason };
 }
 
+export function replayUnavailableFromDecisionHistory(decisionRunCount: number): ReplayResult {
+  return {
+    ...EMPTY,
+    reason: decisionRunCount > 0
+      ? "Decision history exists, but genuine replay observations are unavailable"
+      : "No replay observations available",
+  };
+}
+
 export function alignReplay(
   observations: readonly ReplayObservation[],
   ctx: ReplayAlignmentContext,

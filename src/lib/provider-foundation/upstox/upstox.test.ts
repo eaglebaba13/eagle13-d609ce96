@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   UPSTOX_ADAPTER_ID,
   UPSTOX_CACHE_NAMESPACE,
@@ -20,6 +20,36 @@ import {
   mergeCandleChunks,
 } from "./index";
 import type { UpstoxCandleTuple } from "./index";
+
+vi.mock("@tanstack/react-start", () => {
+  const createServerFn = () => {
+    const definition = {
+      inputValidator: () => definition,
+      middleware: () => definition,
+      handler: (handler: unknown) => handler,
+    };
+    return definition;
+  };
+  return { createServerFn };
+});
+
+vi.mock("@/lib/auth/require-supabase-auth", () => ({
+  requireSupabaseAuth: {},
+}));
+
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            maybeSingle: vi.fn(async () => ({ data: null, error: null })),
+          })),
+        })),
+      })),
+    })),
+  },
+}));
 
 const LIVE_ENV = {
   UPSTOX_MARKET_DATA_MODE: "live",
@@ -230,6 +260,29 @@ describe("upstox http redaction", () => {
     await client.request({ path: "v3/historical-candle/foo/minutes/1/2026-07-16/2026-07-15" });
     expect(seenUrl).not.toContain("live-token-1234567890");
     expect(seenAuth).toContain("Bearer");
+  });
+
+  it("uses the canonical resolved credential for the Authorization header", async () => {
+    let seenAuth = "";
+    const client = new UpstoxHttpClient({
+      env: { ...LIVE_ENV, UPSTOX_ACCESS_TOKEN: "old-env-token" },
+      credentialResolver: async () => ({
+        value: "database-token",
+        status: "READY",
+        source: "DATABASE",
+        enabled: true,
+        expiresAt: null,
+      }),
+      fetchImpl: async (_input, init) => {
+        seenAuth = String((init?.headers as Record<string, string>)?.Authorization ?? "");
+        return jsonResponse({ data: { candles: [] } });
+      },
+    });
+
+    await client.request({ path: "v3/historical-candle/foo/minutes/1/2026-07-16/2026-07-15" });
+
+    expect(seenAuth).toBe("Bearer database-token");
+    expect(seenAuth).not.toContain("old-env-token");
   });
 });
 

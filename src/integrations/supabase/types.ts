@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -101,6 +101,66 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_credential_audit: {
+        Row: {
+          field: string
+          id: string
+          provider: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          field: string
+          id?: string
+          provider: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          field?: string
+          id?: string
+          provider?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      provider_credentials: {
+        Row: {
+          created_at: string
+          credential_type: string
+          encrypted_value: string
+          enabled: boolean
+          expires_at: string | null
+          id: string
+          provider: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          credential_type: string
+          encrypted_value: string
+          enabled?: boolean
+          expires_at?: string | null
+          id?: string
+          provider: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          credential_type?: string
+          encrypted_value?: string
+          enabled?: boolean
+          expires_at?: string | null
+          id?: string
+          provider?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       dashboard_layouts: {
         Row: {
           created_at: string
@@ -130,6 +190,201 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      decision_history_lifecycle_executions: {
+        Row: {
+          completed_at: string
+          duration_ms: number
+          eligible_runs: number
+          evaluated_runs: number
+          execution_id: string
+          failed_runs: number
+          inserted_at: string
+          pending_runs: number
+          safe_warnings: Json
+          skipped_runs: number
+          snapshots_attempted: number
+          snapshots_stored: number
+          started_at: string
+          status: string
+        }
+        Insert: {
+          completed_at: string
+          duration_ms?: number
+          eligible_runs?: number
+          evaluated_runs?: number
+          execution_id: string
+          failed_runs?: number
+          inserted_at?: string
+          pending_runs?: number
+          safe_warnings?: Json
+          skipped_runs?: number
+          snapshots_attempted?: number
+          snapshots_stored?: number
+          started_at: string
+          status: string
+        }
+        Update: {
+          completed_at?: string
+          duration_ms?: number
+          eligible_runs?: number
+          evaluated_runs?: number
+          execution_id?: string
+          failed_runs?: number
+          inserted_at?: string
+          pending_runs?: number
+          safe_warnings?: Json
+          skipped_runs?: number
+          snapshots_attempted?: number
+          snapshots_stored?: number
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      decision_history_market_snapshots: {
+        Row: {
+          data_quality: string
+          freshness_ms: number | null
+          inserted_at: string
+          instrument: string
+          metadata_version: string
+          observed_at: string
+          persisted_at: string
+          price: number | null
+          provider_alias: string
+          snapshot_id: string
+          source_timestamp: string | null
+          verified: boolean
+        }
+        Insert: {
+          data_quality: string
+          freshness_ms?: number | null
+          inserted_at?: string
+          instrument: string
+          metadata_version: string
+          observed_at: string
+          persisted_at: string
+          price?: number | null
+          provider_alias: string
+          snapshot_id: string
+          source_timestamp?: string | null
+          verified?: boolean
+        }
+        Update: {
+          data_quality?: string
+          freshness_ms?: number | null
+          inserted_at?: string
+          instrument?: string
+          metadata_version?: string
+          observed_at?: string
+          persisted_at?: string
+          price?: number | null
+          provider_alias?: string
+          snapshot_id?: string
+          source_timestamp?: string | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      decision_history_outcomes: {
+        Row: {
+          confidence: number | null
+          decision: string
+          decision_timestamp: string
+          entry_reference_price: number | null
+          evaluated_at: string
+          evaluation_horizon: string
+          formula_versions: Json
+          future_price: number | null
+          inserted_at: string
+          instrument: string
+          outcome_state: string
+          provider_labels: Json
+          run_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          decision: string
+          decision_timestamp: string
+          entry_reference_price?: number | null
+          evaluated_at: string
+          evaluation_horizon: string
+          formula_versions?: Json
+          future_price?: number | null
+          inserted_at?: string
+          instrument: string
+          outcome_state: string
+          provider_labels?: Json
+          run_id: string
+        }
+        Update: {
+          confidence?: number | null
+          decision?: string
+          decision_timestamp?: string
+          entry_reference_price?: number | null
+          evaluated_at?: string
+          evaluation_horizon?: string
+          formula_versions?: Json
+          future_price?: number | null
+          inserted_at?: string
+          instrument?: string
+          outcome_state?: string
+          provider_labels?: Json
+          run_id?: string
+        }
+        Relationships: []
+      }
+      decision_history_runs: {
+        Row: {
+          capabilities: Json
+          confidence: number | null
+          decision: string
+          decision_timestamp: string
+          formula_versions: Json
+          inserted_at: string
+          instrument: string
+          provider_labels: Json
+          risk: Json
+          run_id: string
+          signals: Json
+          spot: number | null
+          summary: Json
+          updated_at: string
+        }
+        Insert: {
+          capabilities?: Json
+          confidence?: number | null
+          decision: string
+          decision_timestamp: string
+          formula_versions?: Json
+          inserted_at?: string
+          instrument: string
+          provider_labels?: Json
+          risk?: Json
+          run_id: string
+          signals?: Json
+          spot?: number | null
+          summary?: Json
+          updated_at?: string
+        }
+        Update: {
+          capabilities?: Json
+          confidence?: number | null
+          decision?: string
+          decision_timestamp?: string
+          formula_versions?: Json
+          inserted_at?: string
+          instrument?: string
+          provider_labels?: Json
+          risk?: Json
+          run_id?: string
+          signals?: Json
+          spot?: number | null
+          summary?: Json
+          updated_at?: string
+        }
+        Relationships: [],
       }
       gann_gap_outcomes: {
         Row: {

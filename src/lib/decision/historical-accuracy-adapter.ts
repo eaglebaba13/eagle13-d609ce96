@@ -11,6 +11,9 @@
 // `UNAVAILABLE` capability with an explicit reason — it never fabricates
 // sample sizes or merges incompatible runs.
 
+import { buildOutcomeStats } from "@/lib/decision-history/outcome-aggregation";
+import type { DecisionOutcomeRecord } from "@/lib/decision-history/types";
+
 export type HistoricalSource =
   | "SHADOW_VALIDATED"
   | "WALK_FORWARD_APPROVED"
@@ -72,6 +75,63 @@ export interface HistoricalAccuracyResult {
   readonly freshness: "FRESH" | "STALE" | "UNKNOWN";
   readonly candidateCount: number;
   readonly rejectedReasons: readonly string[];
+  readonly outcomeStats?: ReturnType<typeof buildOutcomeStats>;
+}
+
+function outcomeMatchesContext(outcome: DecisionOutcomeRecord, ctx: HistoricalSelectionContext): boolean {
+  if (outcome.instrument !== ctx.instrument) return false;
+  return Object.values(outcome.formulaVersions).includes(ctx.formulaVersion);
+}
+
+function isEvaluatedDecisionOutcome(outcome: DecisionOutcomeRecord): boolean {
+  return outcome.outcomeState === "WIN" ||
+    outcome.outcomeState === "LOSS" ||
+    outcome.outcomeState === "NEUTRAL" ||
+    outcome.outcomeState === "TIME_EXPIRED";
+}
+
+export function selectHistoricalAccuracyFromOutcomes(
+  outcomes: readonly DecisionOutcomeRecord[],
+  ctx: HistoricalSelectionContext,
+): HistoricalAccuracyResult {
+  const compatible = outcomes.filter((outcome) => outcomeMatchesContext(outcome, ctx));
+  const stats = buildOutcomeStats(compatible);
+  if (stats.evaluatedOutcomes === 0) {
+    return unavailable(
+      compatible.length > 0
+        ? "Decision outcomes are stored but no evaluated outcomes are available"
+        : "No evaluated decision outcomes available",
+      compatible.length,
+      [],
+      "NO_DATA",
+    );
+  }
+
+  const latest = compatible
+    .filter(isEvaluatedDecisionOutcome)
+    .sort((a, b) => Date.parse(b.evaluatedAt) - Date.parse(a.evaluatedAt))[0];
+  const latestAgeMs = latest ? Date.parse(ctx.now) - Date.parse(latest.evaluatedAt) : Number.POSITIVE_INFINITY;
+
+  return {
+    source: "RESEARCH_HISTORY",
+    capability: "SUPPORTED",
+    reason: `Selected ${stats.evaluatedOutcomes} evaluated decision outcomes`,
+    runId: latest?.runId ?? null,
+    sampleSize: stats.evaluatedOutcomes,
+    wins: stats.wins,
+    losses: stats.losses,
+    neutral: stats.neutral + stats.expired,
+    winRatePct: stats.winRatePct,
+    direction: "NEUTRAL",
+    confidenceIntervalPct: wilsonInterval(stats.wins, Math.max(1, stats.evaluatedOutcomes)),
+    evaluatedAt: latest?.evaluatedAt ?? null,
+    formulaVersion: ctx.formulaVersion,
+    strategyVersion: ctx.strategyVersion,
+    freshness: latestAgeMs <= 7 * 86400000 ? "FRESH" : "STALE",
+    candidateCount: compatible.length,
+    rejectedReasons: [],
+    outcomeStats: stats,
+  };
 }
 
 const PRIORITY: Record<HistoricalRunCandidate["source"], number> = {

@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { fetchCanonicalOptionChain } from "./canonical-snapshot.server";
 import { _resetSnapshotHistory } from "./snapshot-history";
+import { UpstoxHttpClient } from "@/lib/provider-foundation/upstox/upstox-http.server";
+import { UpstoxOptionChainProvider } from "./upstox-provider.server";
 
 describe("fetchCanonicalOptionChain", () => {
   beforeEach(() => _resetSnapshotHistory(50));
@@ -40,5 +42,29 @@ describe("fetchCanonicalOptionChain", () => {
     });
     // Provider still fetches; capability layer rejects the expiry format.
     expect(r.capability.status === "INVALID_EXPIRY" || r.capability.status === "SUPPORTED").toBe(true);
+  });
+
+  it("uses the resolved credential for the canonical Upstox request", async () => {
+    let authorization = "";
+    const http = new UpstoxHttpClient({
+      credentialResolver: async () => ({
+        value: "database-token",
+        status: "READY",
+        source: "DATABASE",
+        enabled: true,
+        expiresAt: null,
+      }),
+      fetchImpl: async (_input, init) => {
+        authorization = String((init?.headers as Record<string, string>)?.Authorization ?? "");
+        return new Response(JSON.stringify({ data: [{ expiry: "2099-01-01", underlying_spot_price: 100, strike_price: 100, call_options: {}, put_options: {} }] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      },
+    });
+
+    await new UpstoxOptionChainProvider(http).fetchSnapshot({ underlying: "NIFTY", expiry: "2099-01-01" });
+
+    expect(authorization).toBe("Bearer database-token");
   });
 });

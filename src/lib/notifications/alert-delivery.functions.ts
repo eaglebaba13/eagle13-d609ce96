@@ -5,7 +5,7 @@
 // SELECT to the current user's rows (admins see all via existing policy).
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 
 export interface AlertDeliveryRow {
   readonly id: string;

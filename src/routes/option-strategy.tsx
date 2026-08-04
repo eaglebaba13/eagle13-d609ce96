@@ -197,6 +197,15 @@ function OptionStrategyTerminal() {
           .os10-row .os10-c-live, .os10-row .os10-c-weight, .os10-row .os10-c-status, .os10-row .os10-c-impact { display:none; }
         }
         @media (max-width:820px){ .os-hide-sb{ display:none; } }
+        /* Phase 46C · responsive polish (presentation-only) */
+        @media (max-width:900px){
+          .os-grid[style*="1fr 1.4fr"],
+          .os-grid[style*="1fr 1fr"]{ grid-template-columns:1fr !important; }
+        }
+        @media (max-width:640px){
+          .os-grid[style*="repeat(auto-fit,minmax(150px,1fr))"]{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+        }
+        .os-grid > *{ min-width:0; }
       `}</style>
 
       <div style={{ maxWidth: 1520, margin: "0 auto", padding: "18px 16px 64px", position: "relative", zIndex: 1 }}>

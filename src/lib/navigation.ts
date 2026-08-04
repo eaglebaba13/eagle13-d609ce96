@@ -96,7 +96,11 @@ export const NAV_REGISTRY: NavItem[] = [
   { id: "live-market-terminal", label: "Market Terminal", icon: Activity, to: "/live-market-terminal", section: "MAIN", order: 40, desktopVisible: true, mobileVisible: true, mobileBottom: true, bottomOrder: 3 },
   { id: "level-terminal", label: "Level Terminal", icon: TrendingUp, to: "/live-levels", section: "MAIN", order: 50, desktopVisible: true, mobileVisible: true },
   { id: "decision", label: "Decision", icon: Brain, to: "/decision", section: "MAIN", order: 60, desktopVisible: true, mobileVisible: true },
+  { id: "ai-decision-center", label: "AI Decision Center", icon: Brain, to: "/ai-decision-center", section: "MAIN", order: 65, desktopVisible: true, mobileVisible: true },
   { id: "risk", label: "Risk", icon: ShieldCheck, to: "/risk", section: "MAIN", order: 70, desktopVisible: true, mobileVisible: true },
+  { id: "portfolio", label: "Portfolio", icon: LayoutDashboard, to: "/portfolio", section: "MAIN", order: 72, desktopVisible: true, mobileVisible: true },
+  { id: "watchlist", label: "Watchlist", icon: Target, to: "/watchlist", section: "MAIN", order: 74, desktopVisible: true, mobileVisible: true },
+  { id: "risk-center", label: "Risk Center", icon: ShieldCheck, to: "/risk-center", section: "MAIN", order: 76, desktopVisible: true, mobileVisible: true },
 
   // RESEARCH
   { id: "backtest", label: "Backtest", icon: History, to: "/backtest", section: "RESEARCH", order: 110, desktopVisible: true, mobileVisible: true },
@@ -104,6 +108,8 @@ export const NAV_REGISTRY: NavItem[] = [
   { id: "market-replay", label: "Market Replay", icon: PlayCircle, to: "/market-replay", section: "RESEARCH", order: 130, desktopVisible: true, mobileVisible: true },
   { id: "combined-pcr", label: "Combined PCR — Coming Next", icon: Layers, to: "/combined-pcr", section: "RESEARCH", order: 140, desktopVisible: true, mobileVisible: true },
   { id: "strategy-analytics", label: "Strategy Analytics", icon: BarChart3, to: "/strategy-analytics", section: "RESEARCH", order: 145, desktopVisible: true, mobileVisible: true },
+  { id: "strategy-builder", label: "Strategy Builder", icon: Layers, to: "/strategy-builder", section: "RESEARCH", order: 150, desktopVisible: true, mobileVisible: true },
+  { id: "backtesting-lab", label: "Backtesting Lab", icon: History, to: "/backtesting-lab", section: "RESEARCH", order: 155, desktopVisible: true, mobileVisible: true },
 
   // MARKET
   { id: "option-strategy", label: "NIFTY50 Buying", icon: Target, to: "/option-strategy", section: "MARKET", order: 210, desktopVisible: true, mobileVisible: true },
@@ -129,6 +135,7 @@ export const NAV_REGISTRY: NavItem[] = [
   { id: "admin-beta-readiness", label: "Beta Readiness", icon: ShieldCheck, to: "/admin/beta-readiness", section: "ACCOUNT", order: 307, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
   { id: "admin-alerts", label: "Smart Alerts (Admin)", icon: Bell, to: "/admin/alerts", section: "ACCOUNT", order: 308, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
   { id: "admin-widgets", label: "Widget Toggles", icon: Settings, to: "/admin/widgets", section: "ACCOUNT", order: 309, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
+  { id: "admin-provider-health", label: "Provider Health", icon: Activity, to: "/admin/provider-health", section: "ACCOUNT", order: 306.5, desktopVisible: true, mobileVisible: true, requiredRole: "admin" },
   { id: "license", label: "License", icon: KeyRound, to: "/license", section: "ACCOUNT", order: 320, desktopVisible: true, mobileVisible: true },
   { id: "billing", label: "Billing", icon: ScrollText, to: "/billing", section: "ACCOUNT", order: 330, desktopVisible: true, mobileVisible: true },
   { id: "pricing", label: "Pricing", icon: FileBarChart, to: "/pricing", section: "ACCOUNT", order: 340, desktopVisible: true, mobileVisible: true },

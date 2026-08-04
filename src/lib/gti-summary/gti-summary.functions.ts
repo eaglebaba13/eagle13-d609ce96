@@ -6,7 +6,7 @@
 // module never touches Astro, Decision, Broker, or formulas.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import { getMarketData } from "../market.functions";
 import { computeCombinedPcr } from "../combined-pcr/combined-pcr";
 import { DEFAULT_COMBINED_PCR_WEIGHTS } from "../combined-pcr/types";

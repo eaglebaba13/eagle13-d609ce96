@@ -3,7 +3,7 @@
 // Never fetches its own providers, never emits signals or orders.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import { buildInstitutionalFlowReport } from "./report";
 import type { InstitutionalFlowReport } from "./types";
 import type { OptionUnderlying, OptionChainSnapshot } from "@/lib/option-chain/types";

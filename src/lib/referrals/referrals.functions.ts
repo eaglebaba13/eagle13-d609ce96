@@ -3,7 +3,7 @@
 // re-check `has_role(auth.uid(),'admin')` server-side.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import type { ReferralBroker, ReferralRequestRow } from "./types";
 
 // --------- User: submit a claim ---------

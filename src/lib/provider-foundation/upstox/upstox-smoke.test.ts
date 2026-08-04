@@ -35,6 +35,7 @@ describe("upstox smoke — configuration guards", () => {
     expect(rep.configured).toBe(false);
     expect(rep.authenticated).toBe(false);
     expect(rep.summary.overall).toBe("NOT_CONFIGURED");
+    expect(rep.credentialSource).toBe("ENV");
   });
 
   it("reports NOT_CONFIGURED for placeholder token", async () => {

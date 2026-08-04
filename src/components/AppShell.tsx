@@ -21,6 +21,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { SubscriptionBadge } from "@/components/SubscriptionBadge";
 import { NAV_REGISTRY } from "@/lib/navigation";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { ClosedBetaBanner } from "@/components/ClosedBetaBanner";
 
 // Routes that render their own sidebar/shell — global shell is suppressed on
 // these so we don't double-render the sidebar or break bespoke grid layouts.
@@ -155,7 +156,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
       <div className="flex min-w-0 flex-1 flex-col">
         <AppShellHeader />
-        <main className="min-w-0 flex-1">{children}</main>
+        <ClosedBetaBanner />
+        <main className="min-w-0 flex-1 pb-24 lg:pb-0">{children}</main>
       </div>
     </div>
   );

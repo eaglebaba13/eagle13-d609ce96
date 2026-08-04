@@ -1,10 +1,11 @@
-// Instrument-master resolution for supported Upstox market-data symbols.
+﻿// Instrument-master resolution for supported Upstox market-data symbols.
 //
 // This module ships a versioned, human-readable fallback map so the
 // adapter is functional even before an on-demand instrument-master fetch
 // is wired. Instrument keys are the officially documented Upstox
-// `instrument_key` strings — they are NOT secrets.
+// `instrument_key` strings - they are NOT secrets.
 
+import { getContractNumberField } from "@/lib/contracts";
 import type { QuoteSymbol } from "../types";
 
 export interface UpstoxInstrument {
@@ -22,9 +23,18 @@ export interface UpstoxInstrument {
 
 export const UPSTOX_INSTRUMENT_MASTER_VERSION = "fallback-2026-07-16";
 
+function lotSize(instrument: string): number | null {
+  return getContractNumberField(instrument, "lotSize");
+}
+
+function tickSize(instrument: string): number | null {
+  return getContractNumberField(instrument, "tickSize");
+}
+
 // Instrument keys sourced from Upstox public instrument master.
+// Contract lot/tick metadata is read from the canonical contract registry.
 // Only symbols with a known NSE/MCX listing are included. External assets
-// like XAUUSD / BTC are intentionally omitted — see `resolveInstrument`.
+// like XAUUSD / BTC are intentionally omitted - see `resolveInstrument`.
 const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
   NIFTY50: {
     instrumentKey: "NSE_INDEX|Nifty 50",
@@ -33,8 +43,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "NIFTY 50",
     name: "Nifty 50",
     instrumentType: "INDEX",
-    lotSize: null,
-    tickSize: null,
+    lotSize: lotSize("NIFTY50"),
+    tickSize: tickSize("NIFTY50"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },
@@ -45,8 +55,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "NIFTY BANK",
     name: "Nifty Bank",
     instrumentType: "INDEX",
-    lotSize: null,
-    tickSize: null,
+    lotSize: lotSize("BANKNIFTY"),
+    tickSize: tickSize("BANKNIFTY"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },
@@ -57,8 +67,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "INDIA VIX",
     name: "India VIX",
     instrumentType: "INDEX",
-    lotSize: null,
-    tickSize: null,
+    lotSize: lotSize("INDIA_VIX"),
+    tickSize: tickSize("INDIA_VIX"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },
@@ -69,8 +79,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "GOLD",
     name: "Gold Futures",
     instrumentType: "COMMODITY",
-    lotSize: 100,
-    tickSize: 1,
+    lotSize: lotSize("GOLD"),
+    tickSize: tickSize("GOLD"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },
@@ -81,8 +91,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "SILVER",
     name: "Silver Futures",
     instrumentType: "COMMODITY",
-    lotSize: 30,
-    tickSize: 1,
+    lotSize: lotSize("SILVER"),
+    tickSize: tickSize("SILVER"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },
@@ -93,8 +103,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "CRUDEOIL",
     name: "Crude Oil Futures",
     instrumentType: "COMMODITY",
-    lotSize: 100,
-    tickSize: 1,
+    lotSize: lotSize("CRUDEOIL"),
+    tickSize: tickSize("CRUDEOIL"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },
@@ -105,8 +115,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "NATURALGAS",
     name: "Natural Gas Futures",
     instrumentType: "COMMODITY",
-    lotSize: 1250,
-    tickSize: 0.1,
+    lotSize: lotSize("NATURAL_GAS"),
+    tickSize: tickSize("NATURAL_GAS"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },
@@ -117,8 +127,8 @@ const FALLBACK_MASTER: Readonly<Record<string, UpstoxInstrument>> = {
     tradingSymbol: "USDINR",
     name: "USD/INR",
     instrumentType: "CURRENCY",
-    lotSize: 1000,
-    tickSize: 0.0025,
+    lotSize: lotSize("USDINR"),
+    tickSize: tickSize("USDINR"),
     expiry: null,
     timezone: "Asia/Kolkata",
   },

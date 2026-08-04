@@ -1,18 +1,15 @@
-// Phase 27 · Stage 3 — Market Breadth / GTI server function.
-//
-// Consumes the existing Combined PCR server function output (via direct
-// helper import) for the PCR confirmation, but the breadth itself flows
-// from a provider-neutral bundle. When no live breadth provider is
-// wired, the deterministic mock provider fills the bundle so the
-// research page is always testable — never labelled live.
+﻿// Phase 27 Stage 3 - Market Breadth / GTI server function.
+// Phase 69 wires provider-backed NIFTY50 breadth while preserving all
+// deterministic breadth and GTI formulas.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 import { buildMockBreadthBundle, type MockScenario } from "./mock-provider";
 import { evaluateVixRegime } from "./vix-regime";
 import { adaptPcrConfirmation } from "./pcr-confirmation";
 import { classifyGti } from "./gti-classifier";
 import { evaluateMarketBreadthCapability, type MarketBreadthCapability, type MarketBreadthSourceKind } from "./capability";
+import { buildProviderBackedBreadthBundle } from "./provider-backed.server";
 import { safeProviderLabel } from "@/lib/provider-labels";
 import type { CombinedPcrReading } from "../combined-pcr/types";
 
@@ -46,6 +43,12 @@ function newRunId(): string {
   return `gti-${Date.now().toString(36)}-${rand}`;
 }
 
+function safeMessage(err: unknown, fallback: string): string {
+  return (err instanceof Error ? err.message : fallback)
+    .replace(/token|secret|authorization|cookie|api[-_]?key|bearer/gi, "[REDACTED]")
+    .slice(0, 160);
+}
+
 export const getMarketBreadth = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(validate)
@@ -53,12 +56,14 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
     const startedAt = new Date().toISOString();
     const t0 = Date.now();
     try {
-      const bundle = buildMockBreadthBundle({
+      const liveBundle = data.attachLive ? await buildProviderBackedBreadthBundle() : null;
+      const liveUsable = liveBundle?.summary.status === "LIVE" || liveBundle?.summary.status === "PARTIAL";
+      const mockBundle = liveUsable ? null : buildMockBreadthBundle({
         scenario: data.mockScenario ?? "MIXED",
         broadUniverseSize: data.broadUniverseSize,
       });
+      const bundle = liveBundle ?? mockBundle!;
 
-      // ── Canonical live inputs (India VIX + Combined PCR) ─────
       let vixValue: number | null = data.vix ?? null;
       let vixFreshness: "FRESH" | "STALE" | "UNKNOWN" = data.vix != null ? "FRESH" : "UNKNOWN";
       let vixProviderAlias = data.vix != null ? safeProviderLabel("MARKET_DATA") : "N/A";
@@ -87,7 +92,7 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
               vixError = "no live vix";
             }
           } catch (e) {
-            vixError = e instanceof Error ? e.message.slice(0, 120) : "vix error";
+            vixError = safeMessage(e, "vix error");
           }
           vixLatencyMs = Date.now() - tv;
         }
@@ -102,10 +107,7 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
             const snapshots: Record<string, unknown> = {};
             let anyUsable = false;
             for (const u of ["NIFTY", "BANKNIFTY"] as const) {
-              const res = await fetchCanonicalOptionChain({
-                underlying: u,
-                useMock: data.useMockOptionChain,
-              });
+              const res = await fetchCanonicalOptionChain({ underlying: u, useMock: data.useMockOptionChain });
               pcrCapabilities[u] = res.capability.status;
               const usable = res.capability.status === "SUPPORTED" || res.capability.status === "PARTIAL";
               snapshots[u] = usable && res.snapshot ? res.snapshot : null;
@@ -123,7 +125,7 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
               pcrError = "pcr canonical unavailable";
             }
           } catch (e) {
-            pcrError = e instanceof Error ? e.message.slice(0, 120) : "pcr error";
+            pcrError = safeMessage(e, "pcr error");
           }
           pcrLatencyMs = Date.now() - tp;
         }
@@ -150,12 +152,8 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
         runId: data.runId ?? newRunId(),
       });
 
-      // NIFTY50 constituents come from the deterministic mock provider
-      // (no live per-symbol resolver wired in production); label the
-      // breadth source as RESEARCH_DEMO so consumers never display it
-      // as LIVE. VIX + PCR are live where possible.
-      const breadthSource: MarketBreadthSourceKind = "RESEARCH_DEMO";
-      const providerAlias = safeProviderLabel("BREADTH");
+      const breadthSource: MarketBreadthSourceKind = liveBundle?.summary.status === "LIVE" ? "LIVE" : liveBundle?.summary.status === "PARTIAL" ? "MIXED" : "RESEARCH_DEMO";
+      const providerAlias = liveBundle?.summary.provider ?? safeProviderLabel("BREADTH");
       const capability: MarketBreadthCapability = evaluateMarketBreadthCapability({
         nowIso: new Date().toISOString(),
         vix,
@@ -164,10 +162,11 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
         pcr,
         pcrError,
         pcrLatencyMs,
-        breadth: { broad: bundle.broad, nifty50: bundle.nifty50 },
+        breadth: { broad: liveBundle?.broad ?? null, nifty50: liveBundle?.nifty50 ?? null },
         breadthSource,
         providerAlias,
         latencyMs: Date.now() - t0,
+        marketSession: liveBundle?.summary.marketSession.state,
       });
 
       return {
@@ -177,6 +176,7 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
         providerAlias,
         capability,
         breadthSource,
+        breadthLoadSummary: liveBundle?.summary ?? null,
         vixMeta: {
           providerAlias: vixProviderAlias,
           freshness: vix.freshness,
@@ -197,7 +197,7 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
         completedAt: new Date().toISOString(),
       };
     } catch (e) {
-      const safe = e instanceof Error ? e.message.slice(0, 200) : "market-breadth failed";
+      const safe = safeMessage(e, "market-breadth failed");
       const nowIso = new Date().toISOString();
       const providerAlias = safeProviderLabel("BREADTH");
       return {
@@ -218,6 +218,7 @@ export const getMarketBreadth = createServerFn({ method: "POST" })
           notes: [],
         },
         breadthSource: "RESEARCH_DEMO" as const,
+        breadthLoadSummary: null,
         vixMeta: null,
         pcrMeta: null,
         safeError: safe,
@@ -246,7 +247,7 @@ export const getMarketBreadthDiagnostics = createServerFn({ method: "GET" })
       const report = await buildMarketBreadthDiagnostics();
       return { ok: true as const, report, safeError: null, startedAt, completedAt: new Date().toISOString() };
     } catch (e) {
-      const safe = e instanceof Error ? e.message.slice(0, 200) : "diagnostics failed";
+      const safe = safeMessage(e, "diagnostics failed");
       return { ok: false as const, report: null, safeError: safe, startedAt, completedAt: new Date().toISOString() };
     }
   });

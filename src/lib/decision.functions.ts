@@ -64,6 +64,8 @@ import {
   type ReplayObservation,
   type ReplayResult,
 } from "./decision/replay-adapter";
+import { persistCompletedDecision } from "./decision-history/persistence.functions";
+import { defaultDecisionHistoryRepository } from "./decision-history/repository";
 
 export type DecisionSnapshot = {
   decision: Decision;
@@ -464,6 +466,64 @@ export const getDecisionSnapshot = createServerFn({ method: "GET" }).handler(
           pcr: pcrInput,
           generatedAt: new Date().toISOString(),
         });
+
+        void persistCompletedDecision(
+          {
+            timestamp: new Date().toISOString(),
+            instrument: "NIFTY",
+            spot: market?.nifty?.livePrice ?? null,
+            decision: decision.action,
+            confidence: decision.confidence,
+            risk: {
+              level: decision.risk.level,
+              reasons: decision.risk.reasons,
+            },
+            signals,
+            capabilities: {
+              options: optionsExplainer,
+              pcr: pcrExplainer,
+              historical: {
+                capability: historicalResult.capability,
+                source: historicalResult.source,
+                reason: historicalResult.reason,
+                sampleSize: historicalResult.sampleSize,
+                winRatePct: historicalResult.winRatePct,
+                runId: historicalResult.runId,
+                freshness: historicalResult.freshness,
+                formulaVersion: historicalResult.formulaVersion,
+              },
+              replay: {
+                capability: replayResult.capability,
+                reason: replayResult.reason,
+                observationCount: replayResult.observationCount,
+                dominantDecision: replayResult.dominantDecision,
+                quality: replayResult.quality,
+                startTime: replayResult.startTime,
+                endTime: replayResult.endTime,
+                mfe: replayResult.mfe,
+                mae: replayResult.mae,
+                transitions: replayResult.transitions,
+              },
+            },
+            summary: {
+              action: summary.action,
+              confidence: summary.confidence,
+              risk: summary.risk,
+              present: summary.present,
+              total: summary.total,
+            },
+            formulaVersions: {
+              astro: DEFAULT_ASTRO_FORMULA_VERSION,
+              decision: "decision@1.0.0",
+            },
+            providerLabels: {
+              options: providerAlias,
+              pcr: providerAlias,
+              market: providerAlias,
+            },
+          },
+          defaultDecisionHistoryRepository,
+        );
 
         return {
           decision,

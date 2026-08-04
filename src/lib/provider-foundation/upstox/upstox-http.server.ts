@@ -8,6 +8,7 @@
 // deterministically without hitting the network.
 
 import type { UpstoxError, UpstoxErrorCode } from "./upstox-types";
+import { resolveProviderCredential } from "../provider-credentials.server";
 import { evaluateUpstoxTokenPolicy, type TokenPolicyEnv } from "./upstox-token-policy.server";
 
 export interface UpstoxHttpConfig {
@@ -18,6 +19,7 @@ export interface UpstoxHttpConfig {
   readonly fetchImpl?: typeof fetch;
   readonly nowMs?: () => number;
   readonly env?: TokenPolicyEnv;
+  readonly credentialResolver?: (input: { readonly provider: "upstox"; readonly credentialType: "access_token"; readonly capability: string }) => Promise<{ readonly value: string | null; readonly status: string; readonly source: string; readonly enabled: boolean; readonly expiresAt: string | null; readonly failureReason?: string }>;
 }
 
 export interface UpstoxRequestOptions {
@@ -152,6 +154,8 @@ export class UpstoxHttpClient {
   private readonly backoffBaseMs: number;
   private readonly fetchImpl: typeof fetch;
   private readonly env: TokenPolicyEnv;
+  private readonly credentialResolver?: UpstoxHttpConfig["credentialResolver"];
+  private readonly useInjectedEnv: boolean;
 
   constructor(cfg: UpstoxHttpConfig = {}) {
     this.baseUrl = cfg.baseUrl ?? DEFAULT_BASE_URL;
@@ -165,26 +169,53 @@ export class UpstoxHttpClient {
     // custom transports) are used as-is.
     this.fetchImpl = cfg.fetchImpl ?? (globalThis.fetch.bind(globalThis) as typeof fetch);
     this.env = envOf(cfg);
+    this.credentialResolver = cfg.credentialResolver;
+    this.useInjectedEnv = cfg.env !== undefined && cfg.credentialResolver === undefined;
   }
 
   tokenStatus() {
     return evaluateUpstoxTokenPolicy(this.env);
   }
 
+  private async resolveAccessToken(): Promise<{ token: string | null; status: string; source: string }> {
+    if (this.credentialResolver) {
+      const resolved = await this.credentialResolver({ provider: "upstox", credentialType: "access_token", capability: "upstox-http" });
+      if (resolved.value) {
+        return { token: resolved.value, status: resolved.status, source: resolved.source };
+      }
+      return { token: null, status: resolved.failureReason ?? resolved.status, source: resolved.source };
+    }
+
+    if (this.useInjectedEnv) {
+      const status = evaluateUpstoxTokenPolicy(this.env);
+      return {
+        token: status.tokenUsable ? this.env.UPSTOX_ACCESS_TOKEN ?? null : null,
+        status: status.reason,
+        source: "ENV",
+      };
+    }
+
+    const resolved = await resolveProviderCredential({ provider: "upstox", credentialType: "access_token", capability: "upstox-http" });
+    if (resolved.value) {
+      return { token: resolved.value, status: resolved.status, source: resolved.source };
+    }
+    return { token: null, status: resolved.failureReason ?? resolved.status, source: resolved.source };
+  }
+
   async request<T>(opts: UpstoxRequestOptions): Promise<UpstoxHttpResult<T>> {
-    const status = this.tokenStatus();
-    if (!status.tokenUsable) {
+    const resolved = await this.resolveAccessToken();
+    if (!resolved.token) {
       return {
         ok: false,
         latencyMs: 0,
         error: {
           code: "UPSTOX_AUTH_REQUIRED",
-          message: redact(status.reason),
+          message: redact(`credential unavailable (${resolved.status}/${resolved.source})`),
           requestId: opts.requestId,
         },
       };
     }
-    const token = this.env.UPSTOX_ACCESS_TOKEN!;
+    const token = resolved.token;
     const url = buildUrl(this.baseUrl, opts.path, opts.query);
     const requestId = opts.requestId ?? nextRequestId();
 

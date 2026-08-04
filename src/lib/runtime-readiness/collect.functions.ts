@@ -1,11 +1,10 @@
-// Phase 2G — Runtime readiness collector (server fn).
+﻿// Phase 2G â€” Runtime readiness collector (server fn).
 //
 // Assembles canonical evidence from already-cached snapshots and
 // hands it to the pure builder. This is the single server endpoint
 // consumed by every status page and dashboard summary.
 
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { buildRuntimeReadinessReport } from "./build-report";
 import type { RuntimeReadinessReport } from "./runtime-readiness";
 
@@ -14,7 +13,6 @@ function newRunId(): string {
 }
 
 export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .handler(async (): Promise<RuntimeReadinessReport> => {
     const now = new Date().toISOString();
     const { fetchCanonicalOptionChain } = await import(
@@ -27,7 +25,7 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
     const { evaluateMarketBreadthCapability } = await import(
       "@/lib/market-breadth/capability"
     );
-    const { buildMockBreadthBundle } = await import("@/lib/market-breadth/mock-provider");
+    const { buildProviderBackedBreadthBundle } = await import("@/lib/market-breadth/provider-backed.server");
     const { evaluateVixRegime } = await import("@/lib/market-breadth/vix-regime");
     const { adaptPcrConfirmation } = await import("@/lib/market-breadth/pcr-confirmation");
     const { classifyGti } = await import("@/lib/market-breadth/gti-classifier");
@@ -35,7 +33,7 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
       "@/lib/smart-alerts/readiness"
     );
 
-    // ── Quotes / VIX ────────────────────────────────────────────
+    // â”€â”€ Quotes / VIX â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let quotes: Awaited<ReturnType<typeof getMarketData>> | null = null;
     try {
       quotes = await getMarketData();
@@ -45,7 +43,7 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
     const quotesAvailable = !!quotes?.nifty;
     const vixValue = quotes?.vix?.livePrice ?? null;
 
-    // ── Option chains ───────────────────────────────────────────
+    // â”€â”€ Option chains â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const niftyRes = await fetchCanonicalOptionChain({ underlying: "NIFTY" }).catch(
       () => null,
     );
@@ -53,7 +51,7 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
       () => null,
     );
 
-    // ── Combined PCR (canonical, reused snapshots) ──────────────
+    // â”€â”€ Combined PCR (canonical, reused snapshots) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let pcrReading: ReturnType<typeof computeCombinedPcr> | null = null;
     const snapshots = {
       NIFTY: niftyRes?.snapshot ?? null,
@@ -73,8 +71,8 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
       }
     }
 
-    // ── Breadth capability ──────────────────────────────────────
-    const bundle = buildMockBreadthBundle({ scenario: "MIXED" });
+    // â”€â”€ Breadth capability â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    const bundle = await buildProviderBackedBreadthBundle();
     const vix = evaluateVixRegime({
       currentVix: vixValue,
       previousVix: null,
@@ -92,12 +90,18 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
       pcrError: null,
       pcrLatencyMs: null,
       breadth: { broad: bundle.broad, nifty50: bundle.nifty50 },
-      breadthSource: "RESEARCH_DEMO",
-      providerAlias: "BREADTH",
+      breadthSource:
+        bundle.summary.status === "LIVE"
+          ? "LIVE"
+          : bundle.summary.status === "PARTIAL"
+            ? "MIXED"
+            : "RESEARCH_DEMO",
+      providerAlias: bundle.summary.provider,
+      marketSession: bundle.summary.marketSession.state,
       latencyMs: 0,
     });
 
-    // ── GTI classifier ──────────────────────────────────────────
+    // â”€â”€ GTI classifier â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let gtiComputed = false;
     try {
       classifyGti({
@@ -127,7 +131,7 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
       breadthCapability: breadthCap,
       gtiComputed,
       smartAlertEngine: (() => {
-        // Probe operational health. Non-fatal — engine module registration
+        // Probe operational health. Non-fatal â€” engine module registration
         // reflects import success + rule count + adapter configuration.
         const health = unknownEngineHealth();
         const readiness = classifySmartAlertReadiness(health);
@@ -142,7 +146,7 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
       institutionalFlow: (() => {
         // Institutional Flow depends on canonical option-chain OI. Marked
         // available whenever at least one underlying reports SUPPORTED or
-        // PARTIAL — heavier module reads still run under `/institutional-flow`.
+        // PARTIAL â€” heavier module reads still run under `/institutional-flow`.
         const nifty = niftyRes?.capability?.status;
         const bnk = bnkRes?.capability?.status;
         const anyUsable = [nifty, bnk].some((s) => s === "SUPPORTED" || s === "PARTIAL");
@@ -151,7 +155,7 @@ export const getRuntimeReadinessReport = createServerFn({ method: "POST" })
           demo: !anyUsable ? false : (nifty !== "SUPPORTED" && bnk !== "SUPPORTED"),
           reason: anyUsable
             ? "Institutional Flow consuming canonical option-chain snapshot"
-            : "Institutional Flow blocked — option chain unavailable",
+            : "Institutional Flow blocked â€” option chain unavailable",
           warnings: anyUsable ? [] : ["Canonical option-chain snapshot missing"],
           blockers: anyUsable ? [] : ["OPTION_CHAIN unavailable"],
         };
