@@ -45,7 +45,7 @@ function AdminProviderSettingsPage() {
     setBusy(true);
     setMessage(null);
     try {
-      const saved = await saveSettings({ provider, credentialType, value, updatedBy: "admin", enabled: true, storage: "DATABASE" });
+      await saveSettings({ data: { provider, credentialType, value, enabled: true, storage: "DATABASE" } });
       await refreshSettings();
       setMessage(`Saved ${provider}/${credentialType}`);
     } catch (error) {
@@ -58,7 +58,7 @@ function AdminProviderSettingsPage() {
   async function handleTest(provider: ProviderCredentialKind, credentialType: ProviderCredentialType) {
     setBusy(true);
     try {
-      const result = await testSettings({ provider, credentialType });
+      const result = await testSettings({ data: { provider, credentialType } });
       await refreshSettings();
       setMessage(`Validated ${provider}/${credentialType}: ${result.status}`);
     } finally {
@@ -69,7 +69,7 @@ function AdminProviderSettingsPage() {
   async function handleDisconnect(provider: ProviderCredentialKind, credentialType: ProviderCredentialType) {
     setBusy(true);
     try {
-      await disconnectSettings({ provider, credentialType, updatedBy: "admin" });
+      await disconnectSettings({ data: { provider, credentialType } });
       await refreshSettings();
       setMessage(`Disconnected ${provider}/${credentialType}`);
     } finally {

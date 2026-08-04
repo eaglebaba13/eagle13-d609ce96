@@ -171,7 +171,9 @@ export const getDecisionHistoryDiagnostics = createServerFn({ method: "GET" })
       schedulerEnabled: registration.enabled,
       automaticEvaluationActive: registration.automaticEvaluationActive,
       nextExpectedExecution: registration.nextExpectedExecution,
-      activationBlockers: registration.activationBlockers.map(redactValue),
+      activationBlockers: registration.activationBlockers
+        .map(redactValue)
+        .filter((entry): entry is string => entry !== null),
       lastExecutionAt: executionStats.lastExecutionAt,
       lastExecutionDurationMs: executionStats.lastExecutionDurationMs,
       lastExecutionResult: executionStats.lastExecutionResult,

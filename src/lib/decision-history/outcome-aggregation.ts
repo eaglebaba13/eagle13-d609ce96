@@ -72,7 +72,7 @@ export function buildOutcomeStats(outcomes: readonly DecisionOutcomeRecord[]): D
   let confidenceCount = 0;
   let evaluationTimeSum = 0;
   let evaluationTimeCount = 0;
-  const confidenceBuckets: OutcomeConfidenceBuckets = { ...EMPTY_BUCKETS };
+  const confidenceBuckets: { -readonly [K in keyof OutcomeConfidenceBuckets]: number } = { ...EMPTY_BUCKETS };
   const byDecision: Record<string, OutcomeBucketStats> = {};
   const byInstrument: Record<string, OutcomeBucketStats> = {};
 

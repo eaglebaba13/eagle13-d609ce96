@@ -57,6 +57,7 @@ export function ProviderSettingsSection({
   entries,
   onSave,
   onTest,
+  onDisconnect,
 }: {
   readonly title: string;
   readonly provider: ProviderCredentialKind;

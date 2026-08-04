@@ -173,7 +173,14 @@ describe("verified market snapshot scheduler integration", () => {
   });
 
   it("keeps historical accuracy NO_DATA without evaluated outcomes and replay unchanged", () => {
-    expect(selectHistoricalAccuracyFromOutcomes([], { instrument: "NIFTY50", formulaVersion: "decision@1.0.0" }).capability).toBe("NO_DATA");
+    expect(
+      selectHistoricalAccuracyFromOutcomes([], {
+        instrument: "NIFTY50",
+        strategyVersion: "strategy@1.0.0",
+        formulaVersion: "decision@1.0.0",
+        now: new Date(0).toISOString(),
+      }).capability,
+    ).toBe("NO_DATA");
     expect(replayUnavailableFromDecisionHistory(1).capability).toBe("NO_DATA");
   });
 });
