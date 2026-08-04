@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+﻿import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -36,6 +36,7 @@ import type {
   Validity,
 } from "@/lib/broker/types";
 import { readAudit, appendAudit, clearAudit, type AuditEntry } from "@/lib/broker/audit";
+import { getContractLotSize } from "@/lib/contracts";
 import {
   openPaperTrade,
   closePaperTrade,
@@ -51,7 +52,7 @@ export const Route = createFileRoute("/broker")({
       {
         name: "description",
         content:
-          "Connect Zerodha, Dhan, Angel One and Upstox to EagleBABA. Order ticket, margin preview, paper trading, audit log and broker health — all built on a pluggable adapter architecture.",
+          "Connect Zerodha, Dhan, Angel One and Upstox to EagleBABA. Order ticket, margin preview, paper trading, audit log and broker health â€” all built on a pluggable adapter architecture.",
       },
       { property: "og:title", content: "Broker Integration | EagleBABA" },
       {
@@ -64,6 +65,8 @@ export const Route = createFileRoute("/broker")({
 });
 
 const PAPER_STORAGE_KEY = "eb_paper_trades_v1";
+const DEFAULT_ORDER_INSTRUMENT = "NIFTY";
+const DEFAULT_ORDER_QUANTITY = getContractLotSize(DEFAULT_ORDER_INSTRUMENT).lotSize ?? 0;
 
 function loadPaper(): PaperFill[] {
   if (typeof window === "undefined") return [];
@@ -86,7 +89,7 @@ function savePaper(list: PaperFill[]) {
 }
 
 function fmt(n: number | null | undefined, digits = 2) {
-  if (n == null || !Number.isFinite(n)) return "—";
+  if (n == null || !Number.isFinite(n)) return "â€”";
   return n.toLocaleString("en-IN", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }
 
@@ -119,7 +122,7 @@ function connectionTone(status: string | null | undefined, paperMode: boolean): 
 function BrokerPage() {
   const hydrated = useHydrated();
 
-  // Singleton adapter cache (per broker id) — kept in a ref so React never re-instantiates.
+  // Singleton adapter cache (per broker id) â€” kept in a ref so React never re-instantiates.
   const adaptersRef = useRef<Map<BrokerId, BrokerAdapter>>(new Map());
   const getAdapter = (id: BrokerId): BrokerAdapter => {
     let a = adaptersRef.current.get(id);
@@ -143,9 +146,9 @@ function BrokerPage() {
 
   // Order ticket state.
   const [ticket, setTicket] = useState<OrderRequest>({
-    symbol: "NIFTY",
+    symbol: DEFAULT_ORDER_INSTRUMENT,
     side: "BUY",
-    quantity: 75,
+    quantity: DEFAULT_ORDER_QUANTITY,
     lots: 1,
     orderType: "LIMIT",
     product: "MIS",
@@ -338,12 +341,12 @@ function BrokerPage() {
       <header className="eb-page-head">
         <div>
           <div className="eb-eyebrow">
-            <Plug size={14} /> <span>Phase 19 · Broker Integration Framework</span>
+            <Plug size={14} /> <span>Phase 19 Â· Broker Integration Framework</span>
           </div>
           <h1>Broker Workstation</h1>
           <p className="eb-sub">
             Multi-broker adapter layer with order ticket, margin preview, paper trading, audit log and health telemetry.
-            The trading engines remain frozen — this page is a pure integration layer.
+            The trading engines remain frozen â€” this page is a pure integration layer.
           </p>
         </div>
         <div className="eb-broker-modeswitch" role="group" aria-label="Trading mode">
@@ -424,10 +427,10 @@ function BrokerPage() {
                 onClick={handleConnect}
                 disabled={connecting}
               >
-                {connecting ? "Connecting…" : "Connect"}
+                {connecting ? "Connectingâ€¦" : "Connect"}
               </button>
               <p className="eb-hint">
-                Simulated adapter — production keys and OAuth flows are configured per broker
+                Simulated adapter â€” production keys and OAuth flows are configured per broker
                 and swapped in by implementing the same <code>BrokerAdapter</code> interface.
               </p>
             </div>
@@ -455,16 +458,16 @@ function BrokerPage() {
           </button>
         </header>
         <div className="eb-grid eb-grid-4">
-          <Stat label="Available Margin" value={funds ? fmt(funds.available) : "—"} />
-          <Stat label="Used Margin" value={funds ? fmt(funds.usedMargin) : "—"} />
-          <Stat label="Portfolio Value" value={funds ? fmt(funds.portfolioValue) : "—"} />
-          <Stat label="Realized / Unrealized" value={funds ? `${fmt(funds.realizedPnL)} / ${fmt(funds.unrealizedPnL)}` : "—"} />
+          <Stat label="Available Margin" value={funds ? fmt(funds.available) : "â€”"} />
+          <Stat label="Used Margin" value={funds ? fmt(funds.usedMargin) : "â€”"} />
+          <Stat label="Portfolio Value" value={funds ? fmt(funds.portfolioValue) : "â€”"} />
+          <Stat label="Realized / Unrealized" value={funds ? `${fmt(funds.realizedPnL)} / ${fmt(funds.unrealizedPnL)}` : "â€”"} />
           <Stat label="Open Positions" value="0" />
           <Stat label="Open Orders" value={String(openOrders.length)} />
           <Stat label="Connection" value={connectionLabel} tone={connTone} />
           <Stat
             label="Latency"
-            value={health?.latencyMs != null ? `${health.latencyMs} ms` : "—"}
+            value={health?.latencyMs != null ? `${health.latencyMs} ms` : "â€”"}
           />
         </div>
       </section>
@@ -474,7 +477,7 @@ function BrokerPage() {
         <header className="eb-card-head">
           <h2><Send size={16} /> Order Ticket</h2>
           <span className="eb-tag" data-mode={paperMode ? "paper" : "live"}>
-            {paperMode ? "PAPER" : `LIVE · ${activeAdapter.brokerName}`}
+            {paperMode ? "PAPER" : `LIVE Â· ${activeAdapter.brokerName}`}
           </span>
         </header>
         {!connected ? (
@@ -566,16 +569,16 @@ function BrokerPage() {
 
             {preview ? (
               <div className="eb-preview">
-                <h3><ShieldAlert size={14} /> Order Preview — review before placing</h3>
+                <h3><ShieldAlert size={14} /> Order Preview â€” review before placing</h3>
                 <div className="eb-grid eb-grid-4">
                   <Stat label="Required Margin" value={fmt(preview.requiredMargin)} />
                   <Stat label="Brokerage" value={fmt(preview.brokerage)} />
                   <Stat label="Taxes & Fees" value={fmt(preview.taxes)} />
                   <Stat label="Total Cost" value={fmt(preview.totalCost)} />
-                  <Stat label="Break-even (₹/unit)" value={fmt(preview.breakEven)} />
-                  <Stat label="Decision Confidence" value={dec ? `${Math.round(dec.confidence)}%` : "—"} />
-                  <Stat label="Risk Grade" value={dec?.grade ?? "—"} />
-                  <Stat label="Regime" value={dec?.regime ?? "—"} />
+                  <Stat label="Break-even (â‚¹/unit)" value={fmt(preview.breakEven)} />
+                  <Stat label="Decision Confidence" value={dec ? `${Math.round(dec.confidence)}%` : "â€”"} />
+                  <Stat label="Risk Grade" value={dec?.grade ?? "â€”"} />
+                  <Stat label="Regime" value={dec?.regime ?? "â€”"} />
                 </div>
                 <p className="eb-hint">
                   Orders are never auto-placed. You must explicitly click <strong>Confirm & Place</strong>.
@@ -602,7 +605,7 @@ function BrokerPage() {
                 <tbody>
                   {orders.map((o) => (
                     <tr key={o.orderId}>
-                      <td className="mono">{o.orderId.slice(0, 12)}…</td>
+                      <td className="mono">{o.orderId.slice(0, 12)}â€¦</td>
                       <td>{o.symbol}</td>
                       <td>{o.side}</td>
                       <td>{o.quantity}</td>
@@ -639,7 +642,7 @@ function BrokerPage() {
             <Stat label="Avg Win / Loss" value={`${fmt(stats.avgWin)} / ${fmt(stats.avgLoss)}`} />
           </div>
           {paperTrades.length === 0 ? (
-            <p className="eb-empty">No paper trades yet — use the order ticket above.</p>
+            <p className="eb-empty">No paper trades yet â€” use the order ticket above.</p>
           ) : (
             <div className="eb-table-wrap">
               <table className="eb-table">
@@ -653,7 +656,7 @@ function BrokerPage() {
                       <td>{t.side}</td>
                       <td>{t.quantity}</td>
                       <td>{fmt(t.entryPrice)}</td>
-                      <td>{t.exitPrice != null ? fmt(t.exitPrice) : "—"}</td>
+                      <td>{t.exitPrice != null ? fmt(t.exitPrice) : "â€”"}</td>
                       <td className={t.pnl > 0 ? "pos" : t.pnl < 0 ? "neg" : ""}>{fmt(t.pnl)}</td>
                       <td>{t.status}</td>
                       <td>
@@ -694,8 +697,8 @@ function BrokerPage() {
             value={health?.apiStatus ?? "UNKNOWN"}
             tone={connectionTone(health?.apiStatus, paperMode)}
           />
-          <Stat label="Latency" value={health?.latencyMs != null ? `${health.latencyMs} ms` : "—"} />
-          <Stat label="Last Sync" value={health?.lastSync ? new Date(health.lastSync).toLocaleTimeString() : "—"} />
+          <Stat label="Latency" value={health?.latencyMs != null ? `${health.latencyMs} ms` : "â€”"} />
+          <Stat label="Last Sync" value={health?.lastSync ? new Date(health.lastSync).toLocaleTimeString() : "â€”"} />
         </div>
       </section>
 
@@ -755,3 +758,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+

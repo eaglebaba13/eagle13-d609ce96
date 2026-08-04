@@ -19,6 +19,7 @@ import {
   type ProviderEnvPresence,
   type ProviderEnvPresenceInput,
 } from "./env-presence.server";
+import { resolveProviderCredential } from "./provider-credentials.server";
 
 export interface ProviderDiagnosticsEnv extends TokenPolicyEnv {
   readonly NODE_ENV?: string;
@@ -41,6 +42,7 @@ export interface ProviderDiagnosticsReport {
   readonly mockActive: boolean;
   readonly fallbackReason: string | null;
   readonly tokenStatus: ReturnType<typeof evaluateUpstoxTokenPolicy>;
+  readonly credentialSource: "ENV" | "DATABASE" | "CACHE";
   readonly envPresence: ProviderEnvPresence;
   readonly configurationStatus: ProviderConfigurationStatus;
   readonly supportedSymbols: readonly string[];
@@ -169,8 +171,12 @@ export async function buildProviderDiagnosticsReport(opts: {
 } = {}): Promise<ProviderDiagnosticsReport> {
   const at = opts.nowIso ?? new Date().toISOString();
   const env = opts.env ?? readEnv();
-  const tokenStatus = evaluateUpstoxTokenPolicy(env);
-  const envPresence = evaluateProviderEnvPresence(toPresenceInput(env));
+  const resolvedToken = opts.env
+    ? { value: env.UPSTOX_ACCESS_TOKEN, source: "ENV" as const, status: "READY" as const }
+    : await resolveProviderCredential({ provider: "upstox", credentialType: "access_token", capability: "provider-diagnostics" });
+  const canonicalEnv: ProviderDiagnosticsEnv = { ...env, UPSTOX_ACCESS_TOKEN: resolvedToken.value ?? undefined };
+  const tokenStatus = evaluateUpstoxTokenPolicy(canonicalEnv);
+  const envPresence = evaluateProviderEnvPresence(toPresenceInput(canonicalEnv));
   const liveReady = tokenStatus.mode === "live" && tokenStatus.tokenUsable;
   const modeIsLive = tokenStatus.mode === "live";
   const explicitMock = isExplicitMockMode(env);
@@ -181,7 +187,7 @@ export async function buildProviderDiagnosticsReport(opts: {
 
   try {
     if (liveReady) {
-      const manager = buildLiveUpstoxProviderManager(at, env);
+      const manager = buildLiveUpstoxProviderManager(at, canonicalEnv);
       return {
         at,
         providerSelected: UPSTOX_ADAPTER_ID,
@@ -190,6 +196,7 @@ export async function buildProviderDiagnosticsReport(opts: {
         mockActive: false,
         fallbackReason: null,
         tokenStatus,
+        credentialSource: resolvedToken.source,
         envPresence,
         configurationStatus: "LIVE_ACTIVE",
         supportedSymbols: UPSTOX_SUPPORTED_SYMBOLS,
@@ -214,6 +221,7 @@ export async function buildProviderDiagnosticsReport(opts: {
         mockActive: true,
         fallbackReason: tokenStatus.tokenUsable ? "development mode" : tokenStatus.reason,
         tokenStatus,
+        credentialSource: resolvedToken.source,
         envPresence,
         configurationStatus: "MOCK_ACTIVE",
         supportedSymbols: UPSTOX_SUPPORTED_SYMBOLS,
@@ -238,6 +246,7 @@ export async function buildProviderDiagnosticsReport(opts: {
       mockActive: false,
       fallbackReason: tokenStatus.reason,
       tokenStatus,
+      credentialSource: resolvedToken.source,
       envPresence,
       configurationStatus,
       supportedSymbols: UPSTOX_SUPPORTED_SYMBOLS,
@@ -247,7 +256,7 @@ export async function buildProviderDiagnosticsReport(opts: {
       safeError: null,
     };
   } catch (error) {
-    return buildProviderDiagnosticsFailureReport(error, { env, nowIso: at });
+    return buildProviderDiagnosticsFailureReport(error, { env: canonicalEnv, nowIso: at });
   }
 }
 
@@ -268,6 +277,7 @@ export function buildProviderDiagnosticsFailureReport(
     mockActive: false,
     fallbackReason: "provider diagnostics failed",
     tokenStatus,
+    credentialSource: "ENV",
     envPresence,
     configurationStatus: "NOT_CONFIGURED",
     supportedSymbols: UPSTOX_SUPPORTED_SYMBOLS,

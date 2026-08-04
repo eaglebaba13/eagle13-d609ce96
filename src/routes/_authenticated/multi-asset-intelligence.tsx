@@ -8,6 +8,7 @@ import { AlertTriangle, RefreshCcw } from "lucide-react";
 import {
   getLatestMorningReport,
   retryMorningBriefDelivery,
+  getMorningBriefDiagnostics,
   morningBriefDisclaimer,
 } from "@/lib/multi-asset/report.functions";
 import { MORNING_REPORT_VERSION } from "@/lib/multi-asset/report-composer";
@@ -23,14 +24,16 @@ export const Route = createFileRoute("/_authenticated/multi-asset-intelligence")
 });
 
 function statusVariant(s: string): "default" | "secondary" | "destructive" | "outline" {
-  if (s === "SENT") return "default";
-  if (s === "FAILED") return "destructive";
+  if (s === "SENT" || s === "DELIVERED") return "default";
+  if (s === "FAILED" || s === "CONFIG_MISSING") return "destructive";
+  if (s === "PARTIAL") return "outline";
   return "secondary";
 }
 
 function MultiAssetIntelligencePage() {
   const fetchLatest = useServerFn(getLatestMorningReport);
   const retry = useServerFn(retryMorningBriefDelivery);
+  const fetchDiagnostics = useServerFn(getMorningBriefDiagnostics);
   const router = useRouter();
 
   const q = useQuery({
@@ -39,13 +42,23 @@ function MultiAssetIntelligencePage() {
     staleTime: 30_000,
   });
 
+  const diagnosticsQuery = useQuery({
+    queryKey: ["morning-brief", "diagnostics"],
+    queryFn: () => fetchDiagnostics(),
+    staleTime: 30_000,
+  });
+
   const retryMut = useMutation({
     mutationFn: () => retry(),
-    onSuccess: () => q.refetch(),
+    onSuccess: () => {
+      void q.refetch();
+      void diagnosticsQuery.refetch();
+    },
   });
 
   const record = q.data;
   const payload = record?.payload;
+  const diagnostics = diagnosticsQuery.data;
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 p-4 md:p-8">
@@ -117,6 +130,47 @@ function MultiAssetIntelligencePage() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader><CardTitle>Delivery Diagnostics</CardTitle></CardHeader>
+        <CardContent className="grid gap-3 text-sm md:grid-cols-3">
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Generator</p>
+            <p>{diagnostics?.generatorStatus ?? "NO_DATA"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Telegram config</p>
+            <p>{diagnostics?.telegramConfigurationStatus ?? "NO_DATA"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Latest report</p>
+            <p>{diagnostics?.latestReportStatus ?? "NO_DATA"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Last attempt</p>
+            <p>{diagnostics?.latestDeliveryAttempt ?? "NO_DATA"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Retry count</p>
+            <p>{diagnostics?.deliveryRetryCount ?? 0}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Automation</p>
+            <p>{diagnostics?.schedulerRegistrationStatus ?? "AUTOMATION_INACTIVE"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Market session</p>
+            <p>{diagnostics?.marketSessionState ?? "UNKNOWN"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Persistence</p>
+            <p>{diagnostics?.persistenceStatus ?? "NO_DATA"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">Last safe error</p>
+            <p>{diagnostics?.lastSafeError ?? "NO_DATA"}</p>
+          </div>
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader><CardTitle>Coverage matrix</CardTitle></CardHeader>
         <CardContent className="space-y-2 text-sm">

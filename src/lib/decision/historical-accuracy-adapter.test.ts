@@ -112,3 +112,45 @@ describe("selectHistoricalAccuracy", () => {
     expect(r.freshness).toBe("STALE");
   });
 });
+
+describe("selectHistoricalAccuracyFromOutcomes", () => {
+  function outcome(over: Partial<import("@/lib/decision-history/types").DecisionOutcomeRecord> = {}): import("@/lib/decision-history/types").DecisionOutcomeRecord {
+    return {
+      runId: over.runId ?? "decision-outcome-hist",
+      instrument: over.instrument ?? "NIFTY",
+      decision: over.decision ?? "BUY_CE",
+      decisionTimestamp: over.decisionTimestamp ?? "2026-07-17T09:15:00Z",
+      evaluatedAt: over.evaluatedAt ?? "2026-07-17T09:45:00Z",
+      evaluationHorizon: over.evaluationHorizon ?? "30m",
+      entryReferencePrice: over.entryReferencePrice ?? 22000,
+      futurePrice: over.futurePrice ?? 22080,
+      outcomeState: over.outcomeState ?? "WIN",
+      confidence: over.confidence ?? 82,
+      formulaVersions: over.formulaVersions ?? { decision: "decision@1.0.0" },
+      providerLabels: over.providerLabels ?? { options: "UPSTOX" },
+    };
+  }
+
+  it("preserves NO_DATA when outcomes are unavailable or unevaluated", async () => {
+    const mod = await import("./historical-accuracy-adapter");
+    expect(mod.selectHistoricalAccuracyFromOutcomes([], ctx).capability).toBe("NO_DATA");
+    const pending = mod.selectHistoricalAccuracyFromOutcomes([outcome({ outcomeState: "PENDING" })], ctx);
+    expect(pending.capability).toBe("NO_DATA");
+    expect(pending.reason).toMatch(/no evaluated outcomes/i);
+  });
+
+  it("calculates deterministic accuracy only from evaluated outcomes", async () => {
+    const mod = await import("./historical-accuracy-adapter");
+    const result = mod.selectHistoricalAccuracyFromOutcomes([
+      outcome({ runId: "w", outcomeState: "WIN", confidence: 80 }),
+      outcome({ runId: "l", outcomeState: "LOSS", confidence: 60 }),
+      outcome({ runId: "p", outcomeState: "PENDING", confidence: 100 }),
+    ], ctx);
+    expect(result.capability).toBe("SUPPORTED");
+    expect(result.sampleSize).toBe(2);
+    expect(result.wins).toBe(1);
+    expect(result.losses).toBe(1);
+    expect(result.winRatePct).toBe(50);
+    expect(result.outcomeStats?.confidenceBuckets).toEqual({ "0-25": 0, "26-50": 0, "51-75": 1, "76-100": 1 });
+  });
+});

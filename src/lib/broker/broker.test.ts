@@ -1,7 +1,8 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import { ZerodhaAdapter, DhanAdapter, AngelAdapter, UpstoxAdapter, createAdapter } from "./adapters";
 import { openPaperTrade, closePaperTrade, computePaperStats } from "./paper-engine";
 import type { OrderRequest } from "./types";
+import { getContractLotSize } from "@/lib/contracts";
 
 const sampleOrder: OrderRequest = {
   symbol: "NIFTY25000CE",
@@ -40,6 +41,10 @@ describe("broker adapters", () => {
     const o = await a.placeOrder(sampleOrder);
     const cancelled = await a.cancelOrder(o.orderId);
     expect(cancelled.status).toBe("CANCELLED");
+  });
+
+  it("uses registry lot size for NIFTY default order quantity", () => {
+    expect(getContractLotSize("NIFTY")).toEqual({ instrument: "NIFTY", status: "AVAILABLE", lotSize: 65 });
   });
 
   it("getMargins previews cost", async () => {

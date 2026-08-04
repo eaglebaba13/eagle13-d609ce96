@@ -135,3 +135,13 @@ describe("alignReplay", () => {
     expect(r.capability).toBe("SUPPORTED");
   });
 });
+
+describe("replayUnavailableFromDecisionHistory", () => {
+  it("does not synthesize replay observations from decision history", async () => {
+    const mod = await import("./replay-adapter");
+    const result = mod.replayUnavailableFromDecisionHistory(4);
+    expect(result.capability).toBe("NO_DATA");
+    expect(result.observationCount).toBe(0);
+    expect(result.reason).toMatch(/genuine replay observations are unavailable/i);
+  });
+});

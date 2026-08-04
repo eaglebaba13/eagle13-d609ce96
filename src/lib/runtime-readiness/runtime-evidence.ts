@@ -1,8 +1,8 @@
-// Phase 2F — Canonical Runtime Evidence model.
+﻿// Phase 2F â€” Canonical Runtime Evidence model.
 //
 // One provider-neutral evidence envelope shared by Launch Readiness,
 // Beta Readiness, System Status, GTI Summary, Dashboard health, Option
-// Chain, Combined PCR, Decision and Market Breadth surfaces. Pure — no
+// Chain, Combined PCR, Decision and Market Breadth surfaces. Pure â€” no
 // I/O, no formulas, no provider fetches. Adapters map existing
 // canonical envelopes (OptionChainCapability, MarketBreadthCapability,
 // CombinedPcrReading, etc.) into `RuntimeEvidence` so every readiness
@@ -78,7 +78,7 @@ export interface RuntimeEvidence {
   readonly diagnosticsPath: string | null;
 }
 
-// ─── Option Chain adapter ────────────────────────────────────────────
+// â”€â”€â”€ Option Chain adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function evidenceFromOptionChain(
   moduleId: "OPTION_CHAIN_NIFTY" | "OPTION_CHAIN_BANKNIFTY",
   cap: OptionChainCapability,
@@ -128,7 +128,7 @@ export function evidenceFromOptionChain(
   };
 }
 
-// ─── Combined PCR adapter ────────────────────────────────────────────
+// â”€â”€â”€ Combined PCR adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface CombinedPcrEvidenceInput {
   readonly reading: CombinedPcrReading | null;
   readonly niftyCap?: OptionChainCapability | null;
@@ -174,20 +174,22 @@ export function evidenceFromCombinedPcr(input: CombinedPcrEvidenceInput): Runtim
   };
 }
 
-// ─── Market Breadth adapter ──────────────────────────────────────────
+// â”€â”€â”€ Market Breadth adapter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function evidenceFromMarketBreadth(cap: MarketBreadthCapability): RuntimeEvidence {
   const status: ModuleStatus =
-    cap.status === "SUPPORTED"
-      ? cap.source === "LIVE"
-        ? "HEALTHY"
-        : "DEMO"
-      : cap.status === "PARTIAL"
-        ? "DEGRADED"
-        : cap.status === "STALE"
+    cap.status === "MARKET_CLOSED"
+      ? "DEGRADED"
+      : cap.status === "SUPPORTED"
+        ? cap.source === "LIVE"
+          ? "HEALTHY"
+          : "DEMO"
+        : cap.status === "PARTIAL"
           ? "DEGRADED"
-          : cap.status === "UNSUPPORTED"
-            ? "UNAVAILABLE"
-            : "BLOCKED";
+          : cap.status === "STALE"
+            ? "DEGRADED"
+            : cap.status === "UNSUPPORTED"
+              ? "UNAVAILABLE"
+              : "BLOCKED";
   const readiness: ModuleReadiness =
     status === "HEALTHY"
       ? "READY"
@@ -228,7 +230,7 @@ export function evidenceFromMarketBreadth(cap: MarketBreadthCapability): Runtime
   };
 }
 
-// ─── GTI adapter — inherits Market Breadth source ────────────────────
+// â”€â”€â”€ GTI adapter â€” inherits Market Breadth source â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function evidenceFromGti(
   breadth: RuntimeEvidence,
   computed: boolean,
@@ -289,7 +291,7 @@ export function evidenceFromGti(
   };
 }
 
-// ─── Simple generic adapter for feature-flag / store style modules ───
+// â”€â”€â”€ Simple generic adapter for feature-flag / store style modules â”€â”€â”€
 export interface SimpleEvidenceInput {
   readonly module: ModuleId;
   readonly available: boolean;
@@ -321,3 +323,5 @@ export function evidenceFromSimple(i: SimpleEvidenceInput): RuntimeEvidence {
     diagnosticsPath: i.diagnosticsPath ?? null,
   };
 }
+
+

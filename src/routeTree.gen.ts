@@ -82,6 +82,7 @@ import { Route as AuthenticatedAdminResearchLabRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 import { Route as AuthenticatedAdminReadinessRouteImport } from './routes/_authenticated/admin.readiness'
 import { Route as AuthenticatedAdminProvidersRouteImport } from './routes/_authenticated/admin.providers'
+import { Route as AuthenticatedAdminProviderSettingsRouteImport } from './routes/_authenticated/admin.provider-settings'
 import { Route as AuthenticatedAdminProviderHealthRouteImport } from './routes/_authenticated/admin.provider-health'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminLaunchReadinessRouteImport } from './routes/_authenticated/admin.launch-readiness'
@@ -487,6 +488,12 @@ const AuthenticatedAdminProvidersRoute =
     path: '/admin/providers',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminProviderSettingsRoute =
+  AuthenticatedAdminProviderSettingsRouteImport.update({
+    id: '/admin/provider-settings',
+    path: '/admin/provider-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminProviderHealthRoute =
   AuthenticatedAdminProviderHealthRouteImport.update({
     id: '/admin/provider-health',
@@ -629,6 +636,7 @@ export interface FileRoutesByFullPath {
   '/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
+  '/admin/provider-settings': typeof AuthenticatedAdminProviderSettingsRoute
   '/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -715,6 +723,7 @@ export interface FileRoutesByTo {
   '/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
+  '/admin/provider-settings': typeof AuthenticatedAdminProviderSettingsRoute
   '/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -803,6 +812,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/launch-readiness': typeof AuthenticatedAdminLaunchReadinessRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/provider-health': typeof AuthenticatedAdminProviderHealthRoute
+  '/_authenticated/admin/provider-settings': typeof AuthenticatedAdminProviderSettingsRoute
   '/_authenticated/admin/providers': typeof AuthenticatedAdminProvidersRoute
   '/_authenticated/admin/readiness': typeof AuthenticatedAdminReadinessRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
@@ -891,6 +901,7 @@ export interface FileRouteTypes {
     | '/admin/launch-readiness'
     | '/admin/payments'
     | '/admin/provider-health'
+    | '/admin/provider-settings'
     | '/admin/providers'
     | '/admin/readiness'
     | '/admin/referrals'
@@ -977,6 +988,7 @@ export interface FileRouteTypes {
     | '/admin/launch-readiness'
     | '/admin/payments'
     | '/admin/provider-health'
+    | '/admin/provider-settings'
     | '/admin/providers'
     | '/admin/readiness'
     | '/admin/referrals'
@@ -1064,6 +1076,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/launch-readiness'
     | '/_authenticated/admin/payments'
     | '/_authenticated/admin/provider-health'
+    | '/_authenticated/admin/provider-settings'
     | '/_authenticated/admin/providers'
     | '/_authenticated/admin/readiness'
     | '/_authenticated/admin/referrals'
@@ -1642,6 +1655,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProvidersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/provider-settings': {
+      id: '/_authenticated/admin/provider-settings'
+      path: '/admin/provider-settings'
+      fullPath: '/admin/provider-settings'
+      preLoaderRoute: typeof AuthenticatedAdminProviderSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/provider-health': {
       id: '/_authenticated/admin/provider-health'
       path: '/admin/provider-health'
@@ -1795,6 +1815,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminLaunchReadinessRoute: typeof AuthenticatedAdminLaunchReadinessRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminProviderHealthRoute: typeof AuthenticatedAdminProviderHealthRoute
+  AuthenticatedAdminProviderSettingsRoute: typeof AuthenticatedAdminProviderSettingsRoute
   AuthenticatedAdminProvidersRoute: typeof AuthenticatedAdminProvidersRoute
   AuthenticatedAdminReadinessRoute: typeof AuthenticatedAdminReadinessRoute
   AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
@@ -1836,6 +1857,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAdminLaunchReadinessRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
   AuthenticatedAdminProviderHealthRoute: AuthenticatedAdminProviderHealthRoute,
+  AuthenticatedAdminProviderSettingsRoute:
+    AuthenticatedAdminProviderSettingsRoute,
   AuthenticatedAdminProvidersRoute: AuthenticatedAdminProvidersRoute,
   AuthenticatedAdminReadinessRoute: AuthenticatedAdminReadinessRoute,
   AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,

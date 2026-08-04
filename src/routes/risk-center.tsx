@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+﻿import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
 import {
@@ -11,6 +11,7 @@ import {
   makeAlert,
 } from "@/lib/portfolio-manager";
 import type { LocalAlert, PortfolioState } from "@/lib/portfolio-manager";
+import { getContractLotSize } from "@/lib/contracts";
 
 const C = {
   bg: "var(--eb-bg)", card: "var(--eb-card)", border: "var(--eb-border)",
@@ -34,6 +35,8 @@ export const Route = createFileRoute("/risk-center")({
 
 const STORAGE_KEY = "eb:portfolio-demo";
 const ALERTS_KEY = "eb:local-alerts";
+const DEFAULT_RISK_INSTRUMENT = "NIFTY";
+const DEFAULT_RISK_LOT_SIZE = getContractLotSize(DEFAULT_RISK_INSTRUMENT).lotSize;
 
 function loadState(): PortfolioState {
   if (typeof window === "undefined") return demoPortfolio;
@@ -71,7 +74,7 @@ function RiskCenterPage() {
   const [riskPct, setRiskPct] = useState(1);
   const [entry, setEntry] = useState(24000);
   const [stop, setStop] = useState(23950);
-  const [lotSize, setLotSize] = useState(75);
+  const [lotSize, setLotSize] = useState(DEFAULT_RISK_LOT_SIZE ?? 0);
   const sizing = useMemo(() => computePositionSize({ capital, riskPct, entry, stopLoss: stop, lotSize }), [capital, riskPct, entry, stop, lotSize]);
 
   // Decision overlay
@@ -110,8 +113,8 @@ function RiskCenterPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
           <h1 style={{ fontSize: 22, fontWeight: 600, margin: 0 }}>Risk Center</h1>
           <div style={{ display: "flex", gap: 8 }}>
-            <Link to="/portfolio" style={{ color: C.accent, fontSize: 13 }}>Portfolio →</Link>
-            <Link to="/watchlist" style={{ color: C.accent, fontSize: 13 }}>Watchlist →</Link>
+            <Link to="/portfolio" style={{ color: C.accent, fontSize: 13 }}>Portfolio â†’</Link>
+            <Link to="/watchlist" style={{ color: C.accent, fontSize: 13 }}>Watchlist â†’</Link>
           </div>
         </div>
 
@@ -120,8 +123,8 @@ function RiskCenterPage() {
             <div style={{ fontWeight: 600, marginBottom: 8 }}>Portfolio Risk</div>
             <div style={{ fontSize: 13 }}>Level: <b style={{ color: risk.level === "CRITICAL" ? C.bear : risk.level === "HIGH" ? C.accent : C.bull }}>{risk.level}</b></div>
             <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>
-              Risk {risk.portfolioRiskPct.toFixed(2)}% · Exposure {risk.exposurePct.toFixed(1)}%<br/>
-              Daily Loss {risk.dailyLossPct.toFixed(2)}% · Weekly Loss {risk.weeklyLossPct.toFixed(2)}%<br/>
+              Risk {risk.portfolioRiskPct.toFixed(2)}% Â· Exposure {risk.exposurePct.toFixed(1)}%<br/>
+              Daily Loss {risk.dailyLossPct.toFixed(2)}% Â· Weekly Loss {risk.weeklyLossPct.toFixed(2)}%<br/>
               Max Drawdown {risk.maxDrawdownPct.toFixed(2)}%
             </div>
             {risk.breaches.length > 0 && (
@@ -142,7 +145,7 @@ function RiskCenterPage() {
             </div>
             <div style={{ marginTop: 8, fontSize: 12, color: sizing.valid ? C.text : C.bear }}>
               {sizing.valid ? (
-                <>Recommended Qty: <b>{sizing.recommendedQuantity}</b> ({sizing.lots} lots) · Max Alloc: ₹{sizing.maxCapitalAllocation.toLocaleString("en-IN")} · Max Loss: ₹{sizing.maxLoss.toLocaleString("en-IN")}</>
+                <>Recommended Qty: <b>{sizing.recommendedQuantity}</b> ({sizing.lots} lots) Â· Max Alloc: â‚¹{sizing.maxCapitalAllocation.toLocaleString("en-IN")} Â· Max Loss: â‚¹{sizing.maxLoss.toLocaleString("en-IN")}</>
               ) : (
                 <>Invalid: {sizing.reason}</>
               )}
@@ -159,9 +162,9 @@ function RiskCenterPage() {
               </select>
             </label>
             <div style={{ marginTop: 8, fontSize: 12 }}>
-              Capital Required: ₹{overlay.capitalRequired.toLocaleString("en-IN")}<br/>
+              Capital Required: â‚¹{overlay.capitalRequired.toLocaleString("en-IN")}<br/>
               Suggested Qty: {overlay.suggestedQuantity}<br/>
-              Max Loss: ₹{overlay.maxLoss.toLocaleString("en-IN")}<br/>
+              Max Loss: â‚¹{overlay.maxLoss.toLocaleString("en-IN")}<br/>
               Portfolio Impact: {overlay.portfolioImpactPct.toFixed(2)}%<br/>
               Risk Level: <b style={{ color: overlay.riskLevel === "CRITICAL" ? C.bear : overlay.riskLevel === "HIGH" ? C.accent : C.bull }}>{overlay.riskLevel}</b>
             </div>
@@ -201,7 +204,7 @@ function RiskCenterPage() {
               {alerts.length === 0 && <div style={{ color: C.muted, fontSize: 12 }}>No alerts configured.</div>}
               {alerts.map((a) => (
                 <div key={a.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, borderTop: `1px solid ${C.border}`, padding: "4px 0" }}>
-                  <span>{a.kind} {a.direction ?? ""} {a.threshold ?? ""}{a.triggeredAt ? " · TRIGGERED" : ""}</span>
+                  <span>{a.kind} {a.direction ?? ""} {a.threshold ?? ""}{a.triggeredAt ? " Â· TRIGGERED" : ""}</span>
                   <button onClick={() => removeAlert(a.id)} style={{ background: "none", border: "none", color: C.muted, cursor: "pointer", fontSize: 11 }}>Remove</button>
                 </div>
               ))}
@@ -216,3 +219,5 @@ function RiskCenterPage() {
     </div>
   );
 }
+
+

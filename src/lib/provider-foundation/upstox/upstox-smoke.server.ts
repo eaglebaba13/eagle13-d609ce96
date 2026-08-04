@@ -13,6 +13,7 @@ import {
 import { resolveInstrument, UPSTOX_SUPPORTED_SYMBOLS, type UpstoxSupportedSymbol } from "./upstox-instruments.server";
 import type { QuoteSymbol, Timeframe } from "../types";
 import type { UpstoxErrorCode } from "./upstox-types";
+import { resolveProviderCredential } from "../provider-credentials.server";
 
 export type SmokeErrorSource =
   | "APPLICATION_AUTH"
@@ -222,6 +223,7 @@ export interface UpstoxSmokeReport {
   readonly configured: boolean;
   readonly authenticated: boolean;
   readonly tokenStatus: UpstoxTokenStatus;
+  readonly credentialSource: "ENV" | "DATABASE" | "CACHE";
   readonly instrumentResolved: readonly {
     readonly symbol: string;
     readonly resolved: boolean;
@@ -445,6 +447,7 @@ export function buildUpstoxSmokeFailureReport(
     configured,
     authenticated: tokenStatus.tokenUsable,
     tokenStatus,
+    credentialSource: "ENV",
     instrumentResolved,
     quoteResults: [
       {
@@ -481,11 +484,16 @@ export async function runUpstoxSmokeTest(opts: UpstoxSmokeOptions = {}): Promise
   const nowIso = opts.nowIso ?? new Date().toISOString();
   const nowMs = Date.parse(nowIso);
 
-  const envSource: TokenPolicyEnv =
-    opts.env ?? envFromProcess();
+  const envSource: TokenPolicyEnv = opts.env ?? envFromProcess();
+  const resolvedCredential = opts.env
+    ? null
+    : await resolveProviderCredential({ provider: "upstox", credentialType: "access_token", capability: "upstox-smoke" });
+  const canonicalEnv: TokenPolicyEnv = resolvedCredential
+    ? { ...envSource, UPSTOX_ACCESS_TOKEN: resolvedCredential.value ?? undefined }
+    : envSource;
 
-  const tokenStatus = evaluateUpstoxTokenPolicy(envSource);
-  const configured = tokenStatus.tokenPresent && envSource.UPSTOX_API_KEY != null && envSource.UPSTOX_API_SECRET != null;
+  const tokenStatus = evaluateUpstoxTokenPolicy(canonicalEnv);
+  const configured = tokenStatus.tokenPresent && canonicalEnv.UPSTOX_API_KEY != null && canonicalEnv.UPSTOX_API_SECRET != null;
 
   const targetSymbols = [...REQUIRED_SYMBOLS, ...OPTIONAL_SYMBOLS];
   const instrumentResolved = targetSymbols.map((sym) => {
@@ -513,6 +521,7 @@ export async function runUpstoxSmokeTest(opts: UpstoxSmokeOptions = {}): Promise
       configured,
       authenticated: false,
       tokenStatus,
+      credentialSource: resolvedCredential?.source ?? "ENV",
       instrumentResolved,
       quoteResults: [],
       historicalResults: [],
@@ -528,9 +537,10 @@ export async function runUpstoxSmokeTest(opts: UpstoxSmokeOptions = {}): Promise
     };
   }
 
-  const http = new UpstoxHttpClient({ env: envSource, fetchImpl: opts.fetchImpl, maxRetries: 1, backoffBaseMs: 100 });
-  const histAdapter = new UpstoxHistoricalAdapter({ env: envSource, fetchImpl: opts.fetchImpl, maxRetries: 1, backoffBaseMs: 100 });
-  const intraAdapter = new UpstoxIntradayAdapter({ env: envSource, fetchImpl: opts.fetchImpl, maxRetries: 1, backoffBaseMs: 100 });
+  const clientOptions = { fetchImpl: opts.fetchImpl, maxRetries: 1, backoffBaseMs: 100 };
+  const http = opts.env ? new UpstoxHttpClient({ ...clientOptions, env: envSource }) : new UpstoxHttpClient(clientOptions);
+  const histAdapter = opts.env ? new UpstoxHistoricalAdapter({ ...clientOptions, env: envSource }) : new UpstoxHistoricalAdapter(clientOptions);
+  const intraAdapter = opts.env ? new UpstoxIntradayAdapter({ ...clientOptions, env: envSource }) : new UpstoxIntradayAdapter(clientOptions);
 
   const histTf = opts.historicalTimeframe ?? "1d";
   const toIso = opts.historicalToIso ?? nowIso.slice(0, 10);
@@ -773,6 +783,7 @@ export async function runUpstoxSmokeTest(opts: UpstoxSmokeOptions = {}): Promise
     configured,
     authenticated: true,
     tokenStatus,
+    credentialSource: resolvedCredential?.source ?? "ENV",
     instrumentResolved,
     quoteResults,
     historicalResults,
@@ -824,6 +835,7 @@ export function buildApplicationAuthFailureReport(
     symbolResults: [],
     configured: false,
     authenticated: false,
+    credentialSource: "ENV",
     tokenStatus: {
       tokenPresent: false,
       tokenSource: "NONE",

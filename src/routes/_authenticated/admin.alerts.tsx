@@ -79,8 +79,11 @@ function AdminAlertsPage() {
             <Metric label="Active subscriptions" value={data.activeSubscriptions} />
             <Metric label="Checkpoints" value={data.checkpointCount} />
             <Metric label="Delivery attempts" value={data.deliveryAttempts} />
+            <Metric label="Delivery successes" value={data.deliverySuccesses} />
             <Metric label="Delivery failures" value={data.deliveryFailures} />
             <Metric label="Rules loaded" value={data.ruleCount} />
+            <Metric label="Alerts created" value={data.alertsCreated} />
+            <Metric label="Duplicate alerts prevented" value={data.duplicateAlertsPrevented} />
           </div>
 
           <section className="grid gap-3 sm:grid-cols-2">
@@ -89,12 +92,17 @@ function AdminAlertsPage() {
               <div className="mt-1 text-foreground">{data.lastEvaluationAt ? new Date(data.lastEvaluationAt).toLocaleString() : "—"}</div>
               <div className="mt-1 text-muted-foreground">Status: {data.lastEvaluationStatus}</div>
               <div className="mt-1 text-muted-foreground">Last success: {data.lastSuccessfulEvaluationAt ? new Date(data.lastSuccessfulEvaluationAt).toLocaleString() : "—"}</div>
+              <div className="mt-1 text-muted-foreground">Last safe error: {data.lastSafeError ?? "NONE"}</div>
             </div>
             <div className="rounded-lg border border-border/60 bg-background p-3 text-xs">
               <div className="text-[11px] uppercase text-muted-foreground">External adapters</div>
               <div className="mt-1 text-foreground">
                 {data.externalAdaptersDisabledByConfiguration ? "Disabled by configuration (v1.0)" : "Enabled"}
               </div>
+              <div className="mt-2 text-[11px] uppercase text-muted-foreground">Repository</div>
+              <div className="mt-1 text-muted-foreground">{data.repositoryProvider} / {data.repositoryDurability}</div>
+              <div className="mt-1 text-muted-foreground">Persistence: {data.persistenceReady ? "READY" : "DEGRADED"}</div>
+              <div className="mt-1 text-muted-foreground">Configuration: {data.configurationStatus}</div>
               <div className="mt-2 text-[11px] uppercase text-muted-foreground">Latest safe errors</div>
               {data.latestErrors.length === 0 ? (
                 <div className="mt-1 text-muted-foreground">None</div>

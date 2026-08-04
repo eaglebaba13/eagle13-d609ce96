@@ -1,4 +1,4 @@
-// Phase 2E — Canonical Market Breadth capability model.
+﻿// Phase 2E — Canonical Market Breadth capability model.
 //
 // Deterministic mapping from live-input signals (India VIX quality,
 // canonical Combined PCR, breadth bundle source, breadth data-quality)
@@ -20,7 +20,8 @@ export type MarketBreadthCapabilityStatus =
   | "NO_DATA"
   | "DATA_QUALITY_FAILURE"
   | "PROVIDER_ERROR"
-  | "UNSUPPORTED";
+  | "UNSUPPORTED"
+  | "MARKET_CLOSED";
 
 export type MarketBreadthFailingStage =
   | "NONE"
@@ -60,18 +61,23 @@ export interface MarketBreadthCapabilityInput {
   readonly providerAlias: string;
   readonly latencyMs?: number | null;
   readonly hardError?: string | null;
+  readonly marketSession?: "REGULAR" | "CLOSED" | "UNKNOWN";
 }
 
 function worstBreadthQuality(
   ...snaps: readonly (MarketBreadthSnapshot | null)[]
 ): "OK" | "PARTIAL" | "STALE" | "FAILED" | "MISSING" {
-  let worst: "OK" | "PARTIAL" | "STALE" | "FAILED" | "MISSING" = "MISSING";
+  let worst: "OK" | "PARTIAL" | "STALE" | "FAILED" | "MISSING" | undefined;
   const order: Record<string, number> = { OK: 0, PARTIAL: 1, MISSING: 2, STALE: 3, FAILED: 4 };
   for (const s of snaps) {
     const q = s ? s.dataQuality : "MISSING";
-    if (order[q] > order[worst]) worst = q as typeof worst;
+    if (worst == null || order[q] > order[worst]) worst = q as typeof worst;
   }
-  return worst;
+  return worst ?? "MISSING";
+}
+
+function isLiveBreadthSource(source: MarketBreadthSourceKind): boolean {
+  return source === "LIVE";
 }
 
 export function evaluateMarketBreadthCapability(
@@ -80,6 +86,21 @@ export function evaluateMarketBreadthCapability(
   const notes: string[] = [];
   const observedAt = input.nowIso;
   const providerAlias = input.providerAlias;
+
+  if (input.marketSession === "CLOSED") {
+    return {
+      status: "MARKET_CLOSED",
+      reason: "Market breadth unavailable during closed NSE session",
+      providerAlias,
+      failingStage: "BREADTH",
+      retryable: false,
+      freshness: "UNKNOWN",
+      latencyMs: input.latencyMs ?? null,
+      observedAt,
+      source: input.breadthSource,
+      notes: ["market-closed", ...notes],
+    };
+  }
 
   if (input.hardError) {
     return {
@@ -101,6 +122,7 @@ export function evaluateMarketBreadthCapability(
   const pcrOk = input.pcr.available && input.pcr.dataQuality !== "FAILED" && input.pcr.dataQuality !== "UNAVAILABLE";
   const pcrStale = pcrOk && input.pcr.freshness === "STALE";
   const bq = worstBreadthQuality(input.breadth.broad, input.breadth.nifty50);
+  const breadthIsLive = isLiveBreadthSource(input.breadthSource);
 
   if (!vixOk) notes.push("vix-missing");
   if (vixStale) notes.push("vix-stale");
@@ -158,7 +180,7 @@ export function evaluateMarketBreadthCapability(
 
   const anyStale = vixStale || pcrStale || bq === "STALE";
   const partial =
-    !vixOk || !pcrOk || bq === "PARTIAL" || input.breadthSource !== "LIVE";
+    !vixOk || !pcrOk || bq === "PARTIAL" || bq === "MISSING" || !breadthIsLive;
 
   if (anyStale && !partial) {
     return {
@@ -179,8 +201,8 @@ export function evaluateMarketBreadthCapability(
     return {
       status: "PARTIAL",
       reason:
-        input.breadthSource !== "LIVE"
-          ? "Breadth constituents are research-demo; VIX/PCR live where possible"
+        !breadthIsLive
+          ? "Breadth inputs are not yet provider-backed live"
           : "Some inputs missing or degraded",
       providerAlias,
       failingStage: !vixOk ? "VIX" : !pcrOk ? "PCR" : "BREADTH",
@@ -224,3 +246,5 @@ export function capabilityFromReading(
     latencyMs,
   });
 }
+
+

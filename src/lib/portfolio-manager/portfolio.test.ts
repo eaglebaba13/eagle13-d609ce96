@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "vitest";
 import { computePortfolioSummary, positionPnl } from "./portfolio";
 import { computePositionSize, computeRiskReport, computeDecisionOverlay, DEFAULT_LIMITS } from "./risk-engine";
 import { addSymbol, createWatchlist, filterWatchlist, removeSymbol, togglePin } from "./watchlist";
@@ -6,6 +6,7 @@ import { evaluateAlerts, makeAlert } from "./alerts";
 import { allocationToCsv, buildAllocation, buildReport, positionsToCsv, REPORT_SCHEMA_VERSION } from "./reports";
 import { demoPortfolio } from "./demo";
 import type { Position } from "./types";
+import { getContractLotSize } from "@/lib/contracts";
 
 const NOW = Date.parse("2026-07-28T10:00:00Z");
 
@@ -33,6 +34,13 @@ describe("position sizing", () => {
     expect(computePositionSize({ capital: 1000, riskPct: 0, entry: 100, stopLoss: 90 }).valid).toBe(false);
     expect(computePositionSize({ capital: 1000, riskPct: 1, entry: 100, stopLoss: 100 }).valid).toBe(false);
   });
+  it("uses registry lot sizes for current NIFTY sizing inputs", () => {
+    const lot = getContractLotSize("NIFTY");
+    expect(lot.status).toBe("AVAILABLE");
+    const r = computePositionSize({ capital: 500_000, riskPct: 1, entry: 24000, stopLoss: 23950, lotSize: lot.lotSize ?? 0 });
+    expect(r.recommendedQuantity % 65).toBe(0);
+  });
+
   it("rounds down to lots and computes max loss", () => {
     const r = computePositionSize({ capital: 100_000, riskPct: 1, entry: 100, stopLoss: 99, lotSize: 10 });
     expect(r.valid).toBe(true);

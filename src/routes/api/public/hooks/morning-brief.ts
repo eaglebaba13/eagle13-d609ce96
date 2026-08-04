@@ -6,6 +6,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { runMorningBrief } from "@/lib/multi-asset/report.functions";
 
+function safeError(message: string): string {
+  return message.replace(/token|secret|authorization|cookie|api[-_]?key|bearer|chat[_ -]?id/gi, "[REDACTED]").slice(0, 160);
+}
 function unauthorized(): Response {
   return new Response(JSON.stringify({ error: "unauthorized" }), {
     status: 401, headers: { "Content-Type": "application/json" },
@@ -33,7 +36,7 @@ export const Route = createFileRoute("/api/public/hooks/morning-brief")({
           });
         } catch (err) {
           return Response.json(
-            { ok: false, error: err instanceof Error ? err.message : String(err) },
+            { ok: false, error: safeError(err instanceof Error ? err.message : String(err)) },
             { status: 500 },
           );
         }

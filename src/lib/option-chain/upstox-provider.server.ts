@@ -68,8 +68,25 @@ export class UpstoxOptionChainProvider implements OptionChainProvider {
       path: "v2/option/contract",
       query: { instrument_key: INSTRUMENT_KEYS[underlying] },
     });
-    if (!res.ok) return [];
-    return extractExpiries(res.data?.data);
+    if (!res.ok) {
+  const upstreamCode =
+    res.error.upstoxErrorCode ??
+    res.error.code ??
+    "UNKNOWN";
+
+  const httpStatus =
+    res.error.httpStatus != null
+      ? `HTTP ${res.error.httpStatus}`
+      : "HTTP status unavailable";
+
+  throw new Error(
+    redactUpstoxMessage(
+      `option contract request failed: ${httpStatus}, ${upstreamCode}, ${res.error.message}`,
+    ),
+  );
+}
+
+return extractExpiries(res.data?.data);
   }
 
   async fetchSnapshot(req: OptionChainRequest): Promise<OptionChainResult> {
