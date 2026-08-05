@@ -7,10 +7,12 @@ import {
   getProviderCredentialSettings,
   saveProviderCredentialSettings,
   testProviderCredentialSettings,
-  type ProviderCredentialKind,
-  type ProviderCredentialSetting,
-  type ProviderCredentialType,
-} from "@/lib/provider-foundation/provider-credentials.server";
+} from "@/lib/provider-foundation/provider-credentials.functions";
+import type {
+  ProviderCredentialKind,
+  ProviderCredentialSetting,
+  ProviderCredentialType,
+} from "@/lib/provider-foundation/provider-credentials.types";
 import { ProviderSettingsSection } from "@/lib/provider-foundation/provider-credentials-ui";
 
 export const Route = createFileRoute("/_authenticated/admin/provider-settings")({

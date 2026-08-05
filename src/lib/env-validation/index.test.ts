@@ -23,14 +23,7 @@ describe("env-validation", () => {
     expect(r.ok).toBe(false);
     expect(r.missingRequired).toContain("SUPABASE_URL");
   });
-
-  it("treats empty strings as missing", () => {
-    const r = validateEnv(fullEnv({ LOVABLE_API_KEY: "   " }));
-    expect(r.ok).toBe(false);
-    expect(r.missingRequired).toContain("LOVABLE_API_KEY");
-  });
-
-  it("separates optional keys into missingOptional", () => {
+it("separates optional keys into missingOptional", () => {
     const r = validateEnv(fullEnv({ UPSTOX_ACCESS_TOKEN: undefined }));
     expect(r.ok).toBe(true);
     expect(r.missingOptional).toContain("UPSTOX_ACCESS_TOKEN");

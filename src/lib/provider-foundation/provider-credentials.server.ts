@@ -1,70 +1,30 @@
 import crypto from "node:crypto";
-import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
-import { requireSupabaseAuth } from "@/lib/auth/require-supabase-auth";
 
-export type ProviderCredentialKind = "upstox" | "telegram" | "coindcx" | "future";
-export type ProviderCredentialType =
-  | "api_key"
-  | "api_secret"
-  | "access_token"
-  | "bot_token"
-  | "chat_id";
-export type ProviderCredentialStatus = "READY" | "MISSING" | "INVALID" | "EXPIRED" | "DISABLED";
-export type ProviderCredentialSource = "ENV" | "DATABASE" | "CACHE";
-export type ProviderCredentialFailureReason = "DECRYPTION_FAILED";
-export type ProviderCredentialValidationStatus = "CONNECTED" | "AUTH_REQUIRED" | "EXPIRED" | "PROVIDER_UNAVAILABLE" | "INVALID" | "MARKET_CLOSED" | "UNKNOWN";
+import type {
+  DisconnectProviderCredentialInput,
+  ProviderCredentialFailureReason,
+  ProviderCredentialKind,
+  ProviderCredentialResolution,
+  ProviderCredentialSetting,
+  ProviderCredentialSource,
+  ProviderCredentialStatus,
+  ProviderCredentialType,
+  ProviderCredentialValidationResult,
+  SaveProviderCredentialInput,
+} from "./provider-credentials.types";
 
-export interface ProviderCredentialSetting {
-  readonly provider: ProviderCredentialKind;
-  readonly credentialType: ProviderCredentialType;
-  readonly value: string | null;
-  readonly maskedValue: string;
-  readonly status: ProviderCredentialStatus;
-  readonly source: ProviderCredentialSource;
-  readonly updatedAt: string | null;
-  readonly updatedBy: string | null;
-  readonly enabled: boolean;
-  readonly expiresAt: string | null;
-  readonly failureReason?: ProviderCredentialFailureReason;
-}
-
-export interface ProviderCredentialResolution {
-  readonly provider: ProviderCredentialKind;
-  readonly credentialType: ProviderCredentialType;
-  readonly capability: string;
-  readonly value: string | null;
-  readonly maskedValue: string;
-  readonly status: ProviderCredentialStatus;
-  readonly source: ProviderCredentialSource;
-  readonly updatedAt: string | null;
-  readonly updatedBy: string | null;
-  readonly enabled: boolean;
-  readonly expiresAt: string | null;
-  readonly failureReason?: ProviderCredentialFailureReason;
-}
-
-export interface SaveProviderCredentialInput {
-  readonly provider: ProviderCredentialKind;
-  readonly credentialType: ProviderCredentialType;
-  readonly value: string;
-  readonly updatedBy: string;
-  readonly enabled?: boolean;
-  readonly expiresAt?: string | null;
-  readonly storage?: ProviderCredentialSource;
-}
-
-export interface DisconnectProviderCredentialInput {
-  readonly provider: ProviderCredentialKind;
-  readonly credentialType: ProviderCredentialType;
-  readonly updatedBy: string;
-}
-
-export interface ProviderCredentialValidationResult {
-  readonly status: ProviderCredentialValidationStatus;
-  readonly safeError: string | null;
-  readonly validatedAt: string | null;
-}
+export type {
+  DisconnectProviderCredentialInput,
+  ProviderCredentialFailureReason,
+  ProviderCredentialKind,
+  ProviderCredentialResolution,
+  ProviderCredentialSetting,
+  ProviderCredentialSource,
+  ProviderCredentialStatus,
+  ProviderCredentialType,
+  ProviderCredentialValidationResult,
+  SaveProviderCredentialInput,
+} from "./provider-credentials.types";
 
 interface CredentialCacheEntry {
   readonly value: string | null;
@@ -451,105 +411,3 @@ export async function testProviderCredential(input: {
     expiresAt: null,
   };
 }
-
-export const getProviderCredentialSettings = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("forbidden");
-
-    const providers: ProviderCredentialKind[] = ["upstox", "telegram", "coindcx", "future"];
-    const credentialTypes: ProviderCredentialType[] = ["api_key", "api_secret", "access_token", "bot_token", "chat_id"];
-    const result: Record<string, ProviderCredentialSetting> = {};
-    for (const provider of providers) {
-      for (const credentialType of credentialTypes) {
-        const record = await loadProviderCredentialSetting({ provider, credentialType });
-        result[`${provider}:${credentialType}`] = sanitizeProviderCredentialSettingForClient(record);
-      }
-    }
-    return result;
-  });
-
-export const saveProviderCredentialSettings = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
-    z
-      .object({
-        provider: z.enum(["upstox", "telegram", "coindcx", "future"]),
-        credentialType: z.enum(["api_key", "api_secret", "access_token", "bot_token", "chat_id"]),
-        value: z.string(),
-        enabled: z.boolean().optional(),
-        expiresAt: z.string().nullable().optional(),
-        storage: z.enum(["ENV", "DATABASE", "CACHE"]).optional(),
-      })
-      .parse(data),
-  )
-  .handler(async ({ context, data }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("forbidden");
-
-    const saved = await saveProviderCredentialSetting({
-      ...data,
-      updatedBy: context.userId,
-    });
-    return sanitizeProviderCredentialSettingForClient(saved);
-  });
-
-export const testProviderCredentialSettings = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
-    z
-      .object({
-        provider: z.enum(["upstox", "telegram", "coindcx", "future"]),
-        credentialType: z.enum(["api_key", "api_secret", "access_token", "bot_token", "chat_id"]),
-      })
-      .parse(data),
-  )
-  .handler(async ({ context, data }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("forbidden");
-
-    const validation = await validateProviderCredentialConnection({
-      provider: data.provider,
-      credentialType: data.credentialType,
-      capability: "admin-validation",
-    });
-    return {
-      status: validation.status,
-      safeError: validation.safeError,
-      validatedAt: validation.validatedAt,
-    };
-  });
-
-export const disconnectProviderCredentialSettings = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
-    z
-      .object({
-        provider: z.enum(["upstox", "telegram", "coindcx", "future"]),
-        credentialType: z.enum(["api_key", "api_secret", "access_token", "bot_token", "chat_id"]),
-      })
-      .parse(data),
-  )
-  .handler(async ({ context, data }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (!isAdmin) throw new Error("forbidden");
-
-    const disconnected = await disconnectProviderCredentialSetting({
-      ...data,
-      updatedBy: context.userId,
-    });
-    return sanitizeProviderCredentialSettingForClient(disconnected);
-  });

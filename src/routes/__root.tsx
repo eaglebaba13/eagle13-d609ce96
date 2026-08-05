@@ -11,7 +11,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { isProviderError } from "../lib/provider-errors";
 import { MobileNav } from "../components/MobileNav";
 import { AuthProvider } from "../lib/auth-context";
@@ -50,7 +49,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    console.error(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -206,7 +205,7 @@ function RootComponent() {
       if (!isNonCriticalProviderError(ev.reason)) return;
       // Report diagnostics but swallow the overlay.
       try {
-        reportLovableError(
+        console.error(
           ev.reason instanceof Error ? ev.reason : new Error(String(ev.reason)),
           { boundary: "background_provider_rejection" },
         );

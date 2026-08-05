@@ -33,7 +33,6 @@ export const DEFAULT_ENV_REQUIREMENTS: EnvRequirement[] = [
   { key: "SUPABASE_PUBLISHABLE_KEY", category: "secrets", required: true, description: "Supabase publishable key" },
   { key: "SUPABASE_SERVICE_ROLE_KEY", category: "secrets", required: true, description: "Supabase service role key (server only)" },
   { key: "SUPABASE_DB_URL", category: "database", required: true, description: "Direct database URL" },
-  { key: "LOVABLE_API_KEY", category: "api-keys", required: true, description: "Lovable AI Gateway key" },
   { key: "UPSTOX_API_KEY", category: "provider-keys", required: true, description: "Upstox API key" },
   { key: "UPSTOX_API_SECRET", category: "provider-keys", required: true, description: "Upstox API secret" },
   { key: "UPSTOX_ACCESS_TOKEN", category: "provider-keys", required: false, description: "Upstox access token (rotates)" },
