@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -98,66 +98,6 @@ export type Database = {
           signature_verified?: boolean
           status?: string
           user_id?: string | null
-        }
-        Relationships: []
-      }
-      provider_credential_audit: {
-        Row: {
-          field: string
-          id: string
-          provider: string
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          field: string
-          id?: string
-          provider: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          field?: string
-          id?: string
-          provider?: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Relationships: []
-      }
-      provider_credentials: {
-        Row: {
-          created_at: string
-          credential_type: string
-          encrypted_value: string
-          enabled: boolean
-          expires_at: string | null
-          id: string
-          provider: string
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          created_at?: string
-          credential_type: string
-          encrypted_value: string
-          enabled?: boolean
-          expires_at?: string | null
-          id?: string
-          provider: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          created_at?: string
-          credential_type?: string
-          encrypted_value?: string
-          enabled?: boolean
-          expires_at?: string | null
-          id?: string
-          provider?: string
-          updated_at?: string
-          updated_by?: string | null
         }
         Relationships: []
       }
@@ -384,7 +324,7 @@ export type Database = {
           summary?: Json
           updated_at?: string
         }
-        Relationships: [],
+        Relationships: []
       }
       gann_gap_outcomes: {
         Row: {
@@ -886,6 +826,66 @@ export type Database = {
           theme?: string | null
           timezone?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      provider_credential_audit: {
+        Row: {
+          field: string
+          id: string
+          provider: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          field: string
+          id?: string
+          provider: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          field?: string
+          id?: string
+          provider?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      provider_credentials: {
+        Row: {
+          created_at: string
+          credential_type: string
+          enabled: boolean
+          encrypted_value: string
+          expires_at: string | null
+          id: string
+          provider: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          credential_type: string
+          enabled?: boolean
+          encrypted_value: string
+          expires_at?: string | null
+          id?: string
+          provider: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          credential_type?: string
+          enabled?: boolean
+          encrypted_value?: string
+          expires_at?: string | null
+          id?: string
+          provider?: string
+          updated_at?: string
+          updated_by?: string | null
         }
         Relationships: []
       }
