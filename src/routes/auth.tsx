@@ -195,3 +195,7 @@ function AuthPage() {
     </div>
   );
 }
+git add src/routes/auth.tsx
+git commit -m "Use Supabase Google OAuth in self-hosted deployment"
+git push origin lovable-migration-20260804
+
