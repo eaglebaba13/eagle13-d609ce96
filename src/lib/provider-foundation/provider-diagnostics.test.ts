@@ -1,3 +1,8 @@
+process.env.SUPABASE_URL = "https://test.supabase.co";
+process.env.SUPABASE_PUBLISHABLE_KEY = "test-publishable-key";
+process.env.VITE_SUPABASE_URL = "https://test.supabase.co";
+process.env.VITE_SUPABASE_PUBLISHABLE_KEY = "test-publishable-key";
+
 import { describe, expect, it } from "vitest";
 import {
   UPSTOX_ADAPTER_ID,
@@ -57,6 +62,7 @@ describe("provider diagnostics wiring", () => {
 
   it("reports the canonical database credential source in production", async () => {
     const report = await buildProviderDiagnosticsReport({
+      env: LIVE_ENV,
       nowIso: "2026-07-16T09:15:00.000Z",
     });
 
