@@ -1,0 +1,15 @@
+[variables]
+NIXPACKS_NODE_VERSION = "22.13.1"
+NITRO_PRESET = "node-server"
+
+[phases.install]
+cmds = [
+  "rm -rf node_modules",
+  "npm ci --include=optional"
+]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "node .output/server/index.mjs"
