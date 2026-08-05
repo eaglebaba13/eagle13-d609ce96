@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { getMarketData, type IndexQuote } from "@/lib/market.functions";
@@ -42,20 +42,21 @@ import {
 } from "@/components/runtime-readiness/RuntimeReadinessStrip";
 import { useRuntimeReadinessQuery } from "@/lib/runtime-readiness/use-runtime-readiness";
 
-const marketQuery = () =>
+export const marketQuery = () =>
   queryOptions({
     queryKey: ["market-data"],
     queryFn: () => getMarketData(),
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
+    retry: false,
   });
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => {
-    context.queryClient.ensureQueryData(marketQuery());
     // Secondary sections stream in on their own Suspense boundaries, so we
-    // only prime their caches (non-blocking) instead of awaiting them during
-    // the critical above-the-fold render.
+    // only prime their caches (non-blocking). The critical market query is
+    // intentionally started by the client-safe query below and must not be a
+    // route-loader dependency during SSR.
     context.queryClient.prefetchQuery(newsQuery());
     context.queryClient.prefetchQuery(fiiDiiQuery());
     context.queryClient.prefetchQuery(seasonalityQuery());
@@ -83,9 +84,93 @@ export const Route = createFileRoute("/")({
 const fmt = (n: number) =>
   n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-function Dashboard() {
-  const { data, dataUpdatedAt, isFetching, isStale, error, refetch } =
-    useSuspenseQuery(marketQuery());
+function useMarketDataQuery() {
+  return useQuery(marketQuery());
+}
+
+export function Dashboard() {
+  const market = useMarketDataQuery();
+  if (!market.data) {
+    return <DashboardMarketFallback error={market.error} isFetching={market.isFetching} />;
+  }
+  return <DashboardContent market={market} />;
+}
+
+function DashboardMarketFallback({
+  error,
+  isFetching,
+}: {
+  error: Error | null;
+  isFetching: boolean;
+}) {
+  const message = error
+    ? "Live market data is temporarily unavailable. Retrying from the browser…"
+    : isFetching
+      ? "Connecting to live market data…"
+      : "Loading live market data…";
+  return (
+    <div className="eb-shell eb-scanlines" data-eb-market-state={error ? "unavailable" : "loading"}>
+      <div className="eb-space-bg" aria-hidden="true" />
+      <main
+        className="eb-main"
+        style={{ padding: "48px 18px", maxWidth: 1280, margin: "0 auto" }}
+        aria-live="polite"
+      >
+        <section
+          aria-label="Market data status"
+          style={{
+            maxWidth: 620,
+            margin: "0 auto",
+            padding: 24,
+            textAlign: "center",
+            background: "var(--eb-card)",
+            border: "1px solid var(--eb-border)",
+            borderRadius: 8,
+          }}
+        >
+          <div
+            style={{
+              color: "var(--eb-accent)",
+              fontFamily: "var(--eb-head)",
+              fontSize: 18,
+              letterSpacing: 2,
+            }}
+          >
+            EAGLEBABA MARKET DESK
+          </div>
+          <p
+            style={{
+              color: error ? "var(--eb-bear)" : "var(--eb-muted)",
+              fontFamily: "var(--eb-mono)",
+              fontSize: 12,
+            }}
+          >
+            {message}
+          </p>
+          <p
+            style={{
+              color: "var(--eb-muted)",
+              fontFamily: "var(--eb-mono)",
+              fontSize: 11,
+              marginBottom: 0,
+            }}
+          >
+            No trading decision is available until a verified market snapshot is received.
+          </p>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+type MarketDataQuery = ReturnType<typeof useMarketDataQuery>;
+
+function DashboardContent({
+  market,
+}: {
+  market: MarketDataQuery & { data: NonNullable<MarketDataQuery["data"]> };
+}) {
+  const { data, dataUpdatedAt, isFetching, isStale, error, refetch } = market;
   const clock = useIstClock();
   type TabKey = "nifty" | "banknifty" | "btc" | "gold";
 
@@ -108,11 +193,41 @@ function Dashboard() {
       accent: string;
       safeBand: number;
     }[] = [
-      { key: "nifty", label: "NIFTY 50", badge: "NSE", quote: data.nifty, accent: "var(--eb-accent)", safeBand: 100 },
-      { key: "banknifty", label: "BANKNIFTY", badge: "NSE", quote: data.banknifty, accent: "var(--eb-bn)", safeBand: 300 },
+      {
+        key: "nifty",
+        label: "NIFTY 50",
+        badge: "NSE",
+        quote: data.nifty,
+        accent: "var(--eb-accent)",
+        safeBand: 100,
+      },
+      {
+        key: "banknifty",
+        label: "BANKNIFTY",
+        badge: "NSE",
+        quote: data.banknifty,
+        accent: "var(--eb-bn)",
+        safeBand: 300,
+      },
     ];
-    if (data.btc) list.push({ key: "btc", label: "BTC/USD", badge: "CRYPTO", quote: data.btc, accent: "#f7931a", safeBand: 500 });
-    if (data.gold) list.push({ key: "gold", label: "XAU/USD", badge: "COMEX", quote: data.gold, accent: "var(--eb-accent)", safeBand: 15 });
+    if (data.btc)
+      list.push({
+        key: "btc",
+        label: "BTC/USD",
+        badge: "CRYPTO",
+        quote: data.btc,
+        accent: "#f7931a",
+        safeBand: 500,
+      });
+    if (data.gold)
+      list.push({
+        key: "gold",
+        label: "XAU/USD",
+        badge: "COMEX",
+        quote: data.gold,
+        accent: "var(--eb-accent)",
+        safeBand: 15,
+      });
     return list;
   }, [data.nifty, data.banknifty, data.btc, data.gold]);
 
@@ -121,10 +236,7 @@ function Dashboard() {
   const quote = active.quote;
   const accent = active.accent;
   const safeBand = active.safeBand;
-  const levels = useMemo(
-    () => computeLevels(quote.prevDay, safeBand),
-    [quote.prevDay, safeBand],
-  );
+  const levels = useMemo(() => computeLevels(quote.prevDay, safeBand), [quote.prevDay, safeBand]);
 
   const freshnessByDependency = useMemo(
     () =>
@@ -176,22 +288,19 @@ function Dashboard() {
   // grid preserves the pre-24C two-rail layout on desktop and collapses to
   // one column via `.eb-grid` at <820px.
   const widgetById = useMemo(() => legacyWidgetsById(), []);
-  const leftRail = useMemo(
-    () => {
-      const ids: string[] = [
-        "legacy-quote",
-        ...(data.vix ? ["legacy-vix"] : []),
-        "legacy-gold-silver",
-        "legacy-signal",
-        "legacy-global-markets",
-      ];
-      return ids
-        .filter((id) => !isHidden(prefs, id))
-        .map((id) => widgetById.get(id)!)
-        .filter(Boolean);
-    },
-    [widgetById, data.vix, prefs],
-  );
+  const leftRail = useMemo(() => {
+    const ids: string[] = [
+      "legacy-quote",
+      ...(data.vix ? ["legacy-vix"] : []),
+      "legacy-gold-silver",
+      "legacy-signal",
+      "legacy-global-markets",
+    ];
+    return ids
+      .filter((id) => !isHidden(prefs, id))
+      .map((id) => widgetById.get(id)!)
+      .filter(Boolean);
+  }, [widgetById, data.vix, prefs]);
   const rightRailPick = (id: string) =>
     isHidden(prefs, id) ? [] : [widgetById.get(id)!].filter(Boolean);
   const cprWidget = rightRailPick("legacy-cpr");
@@ -238,11 +347,20 @@ function Dashboard() {
       <div
         role="tablist"
         aria-label="Select index"
-        style={{ display: "flex", background: "var(--eb-bg2)", borderBottom: "2px solid var(--eb-border)" }}
+        style={{
+          display: "flex",
+          background: "var(--eb-bg2)",
+          borderBottom: "2px solid var(--eb-border)",
+        }}
         className="eb-tabrow"
       >
         {tabs.map((t) => (
-          <TabButton key={t.key} active={tab === t.key} color={t.accent} onClick={() => setTab(t.key)}>
+          <TabButton
+            key={t.key}
+            active={tab === t.key}
+            color={t.accent}
+            onClick={() => setTab(t.key)}
+          >
             {t.label}
             <Badge>{t.badge}</Badge>
           </TabButton>
@@ -291,18 +409,18 @@ function Dashboard() {
             }}
             className="eb-grid"
           >
-            <DashboardGrid
-              device="mobile"
-              context={{ plan: "free" }}
-              widgets={leftRail}
-            />
+            <DashboardGrid device="mobile" context={{ plan: "free" }} widgets={leftRail} />
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <DashboardGrid device="mobile" context={{ plan: "free" }} widgets={cprWidget} />
               <div
                 style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}
                 className="eb-grid"
               >
-                <DashboardGrid device="mobile" context={{ plan: "free" }} widgets={safeZonesWidget} />
+                <DashboardGrid
+                  device="mobile"
+                  context={{ plan: "free" }}
+                  widgets={safeZonesWidget}
+                />
                 <DashboardGrid device="mobile" context={{ plan: "free" }} widgets={gannWidget} />
               </div>
               <DashboardGrid device="mobile" context={{ plan: "free" }} widgets={pivotWidget} />
@@ -493,10 +611,12 @@ function Header({
           }}
         />
         <span>
-        EAGLE<span style={{ color: "var(--eb-accent2)" }}>BABA</span>
-        <span style={{ fontSize: 13, letterSpacing: 2, color: "var(--eb-muted)", marginLeft: 10 }}>
-          · ASTRO LEVELS
-        </span>
+          EAGLE<span style={{ color: "var(--eb-accent2)" }}>BABA</span>
+          <span
+            style={{ fontSize: 13, letterSpacing: 2, color: "var(--eb-muted)", marginLeft: 10 }}
+          >
+            · ASTRO LEVELS
+          </span>
         </span>
       </div>
       <div
@@ -518,7 +638,9 @@ function Header({
         {goldSilverRatio != null ? (
           <span style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
             <span style={{ color: "var(--eb-neutral)", fontWeight: 700 }}>GS RATIO</span>
-            <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>{goldSilverRatio}</span>
+            <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>
+              {goldSilverRatio}
+            </span>
           </span>
         ) : null}
         <span>
@@ -562,7 +684,9 @@ function MiniTicker({ q, color, label }: { q: IndexQuote; color: string; label?:
   return (
     <span style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
       <span style={{ color, fontWeight: 700 }}>{label ?? q.name}</span>
-      <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>{fmt(q.livePrice)}</span>
+      <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>
+        {fmt(q.livePrice)}
+      </span>
       <span suppressHydrationWarning style={{ color: up ? "var(--eb-bull)" : "var(--eb-bear)" }}>
         {up ? "▲" : "▼"} {q.changePct}%
       </span>
@@ -602,8 +726,12 @@ function LiveTicker({
       const tone = (invert ? !up : up) ? "var(--eb-bull)" : "var(--eb-bear)";
       return (
         <span className="eb-ticker-item" key={`${keyPrefix}-${label}`}>
-          <span className="eb-ticker-sym" style={{ color }}>{label}</span>
-          <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>{fmt(q.livePrice)}</span>
+          <span className="eb-ticker-sym" style={{ color }}>
+            {label}
+          </span>
+          <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>
+            {fmt(q.livePrice)}
+          </span>
           <span suppressHydrationWarning style={{ color: tone }}>
             {up ? "▲" : "▼"} {q.changePct}%
           </span>
@@ -628,7 +756,9 @@ function VixTicker({ q }: { q: IndexQuote }) {
   return (
     <span style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
       <span style={{ color: "var(--eb-neutral)", fontWeight: 700 }}>VIX</span>
-      <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>{fmt(q.livePrice)}</span>
+      <span suppressHydrationWarning style={{ color: "var(--eb-text)" }}>
+        {fmt(q.livePrice)}
+      </span>
       <span suppressHydrationWarning style={{ color: col }}>
         {up ? "▲" : "▼"} {q.changePct}%
       </span>
@@ -714,7 +844,15 @@ function ReferralBanner() {
         justifyContent: "space-between",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 240, flex: "1 1 320px" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 4,
+          minWidth: 240,
+          flex: "1 1 320px",
+        }}
+      >
         <span
           style={{
             fontFamily: "var(--eb-head)",
@@ -725,7 +863,14 @@ function ReferralBanner() {
         >
           📈 Open Your Demat Account with INDmoney
         </span>
-        <span style={{ fontSize: 13, color: "var(--eb-text)", lineHeight: 1.5, fontFamily: "var(--eb-body)" }}>
+        <span
+          style={{
+            fontSize: 13,
+            color: "var(--eb-text)",
+            lineHeight: 1.5,
+            fontFamily: "var(--eb-body)",
+          }}
+        >
           Invest across 6000+ Stocks &amp; ETFs 🚀 Real-time price alerts ✨ Custom watchlists for
           your favourite stocks.
         </span>
