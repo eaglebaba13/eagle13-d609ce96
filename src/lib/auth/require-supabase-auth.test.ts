@@ -3,9 +3,10 @@ import { readFileSync } from "node:fs";
 import { isServerLocalBypassEnabled } from "@/lib/local-dev-auth";
 
 const source = readFileSync("src/lib/auth/require-supabase-auth.ts", "utf8");
-const guard = readFileSync("src/routes/_authenticated/route.tsx", "utf8");
+const publicGuard = readFileSync("src/routes/_authenticated/route.tsx", "utf8");
+const adminGuard = readFileSync("src/routes/_authenticated/admin.tsx", "utf8");
 
-describe("Phase 52D — requireSupabaseAuth wiring", () => {
+describe("Phase 52D - requireSupabaseAuth wiring", () => {
   it("keeps the production bearer-token checks intact", () => {
     expect(source).toContain("Unauthorized: No authorization header provided");
     expect(source).toContain("Unauthorized: Only Bearer tokens are supported");
@@ -31,8 +32,11 @@ describe("Phase 52D — requireSupabaseAuth wiring", () => {
     expect(isServerLocalBypassEnabled(prod)).toBe(false);
   });
 
-  it("route guard skips the /auth redirect locally but keeps it otherwise", () => {
-    expect(guard).toContain("clientLocalBypassActive()");
-    expect(guard).toContain('redirect({ to: "/auth" })');
+  it("keeps research routes public while admin routes remain protected", () => {
+    expect(publicGuard).not.toContain("beforeLoad");
+    expect(publicGuard).not.toContain("redirect(");
+    expect(adminGuard).toContain("supabase.auth.getUser()");
+    expect(adminGuard).toContain('_role: "admin"');
+    expect(adminGuard).toContain("has_role");
   });
 });

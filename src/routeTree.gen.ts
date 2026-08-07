@@ -44,6 +44,7 @@ import { Route as StatusRouteImport } from './routes/status'
 import { Route as StrategyBuilderRouteImport } from './routes/strategy-builder'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WatchlistRouteImport } from './routes/watchlist'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAiMarketAssistantRouteImport } from './routes/_authenticated/ai-market-assistant'
 import { Route as AuthenticatedAlertsRouteImport } from './routes/_authenticated/alerts'
 import { Route as AuthenticatedBacktestLabRouteImport } from './routes/_authenticated/backtest-lab'
@@ -267,6 +268,11 @@ const WatchlistRoute = WatchlistRouteImport.update({
   path: '/watchlist',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAiMarketAssistantRoute =
   AuthenticatedAiMarketAssistantRouteImport.update({
     id: '/ai-market-assistant',
@@ -391,105 +397,105 @@ const DevDiagnosticsRoute = DevDiagnosticsRouteImport.update({
 } as any)
 const AuthenticatedAdminAlertsRoute =
   AuthenticatedAdminAlertsRouteImport.update({
-    id: '/admin/alerts',
-    path: '/admin/alerts',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/alerts',
+    path: '/alerts',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminBetaReadinessRoute =
   AuthenticatedAdminBetaReadinessRouteImport.update({
-    id: '/admin/beta-readiness',
-    path: '/admin/beta-readiness',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/beta-readiness',
+    path: '/beta-readiness',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminCoindcxRoute =
   AuthenticatedAdminCoindcxRouteImport.update({
-    id: '/admin/coindcx',
-    path: '/admin/coindcx',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/coindcx',
+    path: '/coindcx',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminGannGapRoute =
   AuthenticatedAdminGannGapRouteImport.update({
-    id: '/admin/gann-gap',
-    path: '/admin/gann-gap',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/gann-gap',
+    path: '/gann-gap',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminInstitutionalFlowRoute =
   AuthenticatedAdminInstitutionalFlowRouteImport.update({
-    id: '/admin/institutional-flow',
-    path: '/admin/institutional-flow',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/institutional-flow',
+    path: '/institutional-flow',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminLaunchReadinessRoute =
   AuthenticatedAdminLaunchReadinessRouteImport.update({
-    id: '/admin/launch-readiness',
-    path: '/admin/launch-readiness',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/launch-readiness',
+    path: '/launch-readiness',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminPaymentsRoute =
   AuthenticatedAdminPaymentsRouteImport.update({
-    id: '/admin/payments',
-    path: '/admin/payments',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminProviderHealthRoute =
   AuthenticatedAdminProviderHealthRouteImport.update({
-    id: '/admin/provider-health',
-    path: '/admin/provider-health',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/provider-health',
+    path: '/provider-health',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminProviderSettingsRoute =
   AuthenticatedAdminProviderSettingsRouteImport.update({
-    id: '/admin/provider-settings',
-    path: '/admin/provider-settings',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/provider-settings',
+    path: '/provider-settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminProvidersRoute =
   AuthenticatedAdminProvidersRouteImport.update({
-    id: '/admin/providers',
-    path: '/admin/providers',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/providers',
+    path: '/providers',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminReadinessRoute =
   AuthenticatedAdminReadinessRouteImport.update({
-    id: '/admin/readiness',
-    path: '/admin/readiness',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/readiness',
+    path: '/readiness',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminReferralsRoute =
   AuthenticatedAdminReferralsRouteImport.update({
-    id: '/admin/referrals',
-    path: '/admin/referrals',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/referrals',
+    path: '/referrals',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminResearchLabRoute =
   AuthenticatedAdminResearchLabRouteImport.update({
-    id: '/admin/research-lab',
-    path: '/admin/research-lab',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/research-lab',
+    path: '/research-lab',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminStagingValidationRoute =
   AuthenticatedAdminStagingValidationRouteImport.update({
-    id: '/admin/staging-validation',
-    path: '/admin/staging-validation',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/staging-validation',
+    path: '/staging-validation',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminSystemStatusRoute =
   AuthenticatedAdminSystemStatusRouteImport.update({
-    id: '/admin/system-status',
-    path: '/admin/system-status',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/system-status',
+    path: '/system-status',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminTradingviewRoute =
   AuthenticatedAdminTradingviewRouteImport.update({
-    id: '/admin/tradingview',
-    path: '/admin/tradingview',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/tradingview',
+    path: '/tradingview',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminWidgetsRoute =
   AuthenticatedAdminWidgetsRouteImport.update({
-    id: '/admin/widgets',
-    path: '/admin/widgets',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/widgets',
+    path: '/widgets',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedResearchLabAlertsRoute =
   AuthenticatedResearchLabAlertsRouteImport.update({
@@ -575,6 +581,7 @@ export interface FileRoutesByFullPath {
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/watchlist': typeof WatchlistRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/backtest-lab': typeof AuthenticatedBacktestLabRoute
@@ -658,6 +665,7 @@ export interface FileRoutesByTo {
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/watchlist': typeof WatchlistRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
   '/alerts': typeof AuthenticatedAlertsRoute
   '/backtest-lab': typeof AuthenticatedBacktestLabRoute
@@ -743,6 +751,7 @@ export interface FileRoutesById {
   '/strategy-builder': typeof StrategyBuilderRoute
   '/terms': typeof TermsRoute
   '/watchlist': typeof WatchlistRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/ai-market-assistant': typeof AuthenticatedAiMarketAssistantRoute
   '/_authenticated/alerts': typeof AuthenticatedAlertsRoute
   '/_authenticated/backtest-lab': typeof AuthenticatedBacktestLabRoute
@@ -828,6 +837,7 @@ export interface FileRouteTypes {
     | '/strategy-builder'
     | '/terms'
     | '/watchlist'
+    | '/admin'
     | '/ai-market-assistant'
     | '/alerts'
     | '/backtest-lab'
@@ -911,6 +921,7 @@ export interface FileRouteTypes {
     | '/strategy-builder'
     | '/terms'
     | '/watchlist'
+    | '/admin'
     | '/ai-market-assistant'
     | '/alerts'
     | '/backtest-lab'
@@ -995,6 +1006,7 @@ export interface FileRouteTypes {
     | '/strategy-builder'
     | '/terms'
     | '/watchlist'
+    | '/_authenticated/admin'
     | '/_authenticated/ai-market-assistant'
     | '/_authenticated/alerts'
     | '/_authenticated/backtest-lab'
@@ -1334,6 +1346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WatchlistRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/ai-market-assistant': {
       id: '/_authenticated/ai-market-assistant'
       path: '/ai-market-assistant'
@@ -1490,122 +1509,122 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/admin/alerts': {
       id: '/_authenticated/admin/alerts'
-      path: '/admin/alerts'
+      path: '/alerts'
       fullPath: '/admin/alerts'
       preLoaderRoute: typeof AuthenticatedAdminAlertsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/beta-readiness': {
       id: '/_authenticated/admin/beta-readiness'
-      path: '/admin/beta-readiness'
+      path: '/beta-readiness'
       fullPath: '/admin/beta-readiness'
       preLoaderRoute: typeof AuthenticatedAdminBetaReadinessRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/coindcx': {
       id: '/_authenticated/admin/coindcx'
-      path: '/admin/coindcx'
+      path: '/coindcx'
       fullPath: '/admin/coindcx'
       preLoaderRoute: typeof AuthenticatedAdminCoindcxRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/gann-gap': {
       id: '/_authenticated/admin/gann-gap'
-      path: '/admin/gann-gap'
+      path: '/gann-gap'
       fullPath: '/admin/gann-gap'
       preLoaderRoute: typeof AuthenticatedAdminGannGapRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/institutional-flow': {
       id: '/_authenticated/admin/institutional-flow'
-      path: '/admin/institutional-flow'
+      path: '/institutional-flow'
       fullPath: '/admin/institutional-flow'
       preLoaderRoute: typeof AuthenticatedAdminInstitutionalFlowRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/launch-readiness': {
       id: '/_authenticated/admin/launch-readiness'
-      path: '/admin/launch-readiness'
+      path: '/launch-readiness'
       fullPath: '/admin/launch-readiness'
       preLoaderRoute: typeof AuthenticatedAdminLaunchReadinessRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/payments': {
       id: '/_authenticated/admin/payments'
-      path: '/admin/payments'
+      path: '/payments'
       fullPath: '/admin/payments'
       preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/provider-health': {
       id: '/_authenticated/admin/provider-health'
-      path: '/admin/provider-health'
+      path: '/provider-health'
       fullPath: '/admin/provider-health'
       preLoaderRoute: typeof AuthenticatedAdminProviderHealthRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/provider-settings': {
       id: '/_authenticated/admin/provider-settings'
-      path: '/admin/provider-settings'
+      path: '/provider-settings'
       fullPath: '/admin/provider-settings'
       preLoaderRoute: typeof AuthenticatedAdminProviderSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/providers': {
       id: '/_authenticated/admin/providers'
-      path: '/admin/providers'
+      path: '/providers'
       fullPath: '/admin/providers'
       preLoaderRoute: typeof AuthenticatedAdminProvidersRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/readiness': {
       id: '/_authenticated/admin/readiness'
-      path: '/admin/readiness'
+      path: '/readiness'
       fullPath: '/admin/readiness'
       preLoaderRoute: typeof AuthenticatedAdminReadinessRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/referrals': {
       id: '/_authenticated/admin/referrals'
-      path: '/admin/referrals'
+      path: '/referrals'
       fullPath: '/admin/referrals'
       preLoaderRoute: typeof AuthenticatedAdminReferralsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/research-lab': {
       id: '/_authenticated/admin/research-lab'
-      path: '/admin/research-lab'
+      path: '/research-lab'
       fullPath: '/admin/research-lab'
       preLoaderRoute: typeof AuthenticatedAdminResearchLabRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/staging-validation': {
       id: '/_authenticated/admin/staging-validation'
-      path: '/admin/staging-validation'
+      path: '/staging-validation'
       fullPath: '/admin/staging-validation'
       preLoaderRoute: typeof AuthenticatedAdminStagingValidationRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/system-status': {
       id: '/_authenticated/admin/system-status'
-      path: '/admin/system-status'
+      path: '/system-status'
       fullPath: '/admin/system-status'
       preLoaderRoute: typeof AuthenticatedAdminSystemStatusRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/tradingview': {
       id: '/_authenticated/admin/tradingview'
-      path: '/admin/tradingview'
+      path: '/tradingview'
       fullPath: '/admin/tradingview'
       preLoaderRoute: typeof AuthenticatedAdminTradingviewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/widgets': {
       id: '/_authenticated/admin/widgets'
-      path: '/admin/widgets'
+      path: '/widgets'
       fullPath: '/admin/widgets'
       preLoaderRoute: typeof AuthenticatedAdminWidgetsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/research-lab/alerts': {
       id: '/_authenticated/research-lab/alerts'
@@ -1666,6 +1685,53 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAlertsRoute: typeof AuthenticatedAdminAlertsRoute
+  AuthenticatedAdminBetaReadinessRoute: typeof AuthenticatedAdminBetaReadinessRoute
+  AuthenticatedAdminCoindcxRoute: typeof AuthenticatedAdminCoindcxRoute
+  AuthenticatedAdminGannGapRoute: typeof AuthenticatedAdminGannGapRoute
+  AuthenticatedAdminInstitutionalFlowRoute: typeof AuthenticatedAdminInstitutionalFlowRoute
+  AuthenticatedAdminLaunchReadinessRoute: typeof AuthenticatedAdminLaunchReadinessRoute
+  AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminProviderHealthRoute: typeof AuthenticatedAdminProviderHealthRoute
+  AuthenticatedAdminProviderSettingsRoute: typeof AuthenticatedAdminProviderSettingsRoute
+  AuthenticatedAdminProvidersRoute: typeof AuthenticatedAdminProvidersRoute
+  AuthenticatedAdminReadinessRoute: typeof AuthenticatedAdminReadinessRoute
+  AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
+  AuthenticatedAdminResearchLabRoute: typeof AuthenticatedAdminResearchLabRoute
+  AuthenticatedAdminStagingValidationRoute: typeof AuthenticatedAdminStagingValidationRoute
+  AuthenticatedAdminSystemStatusRoute: typeof AuthenticatedAdminSystemStatusRoute
+  AuthenticatedAdminTradingviewRoute: typeof AuthenticatedAdminTradingviewRoute
+  AuthenticatedAdminWidgetsRoute: typeof AuthenticatedAdminWidgetsRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAlertsRoute: AuthenticatedAdminAlertsRoute,
+  AuthenticatedAdminBetaReadinessRoute: AuthenticatedAdminBetaReadinessRoute,
+  AuthenticatedAdminCoindcxRoute: AuthenticatedAdminCoindcxRoute,
+  AuthenticatedAdminGannGapRoute: AuthenticatedAdminGannGapRoute,
+  AuthenticatedAdminInstitutionalFlowRoute:
+    AuthenticatedAdminInstitutionalFlowRoute,
+  AuthenticatedAdminLaunchReadinessRoute:
+    AuthenticatedAdminLaunchReadinessRoute,
+  AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+  AuthenticatedAdminProviderHealthRoute: AuthenticatedAdminProviderHealthRoute,
+  AuthenticatedAdminProviderSettingsRoute:
+    AuthenticatedAdminProviderSettingsRoute,
+  AuthenticatedAdminProvidersRoute: AuthenticatedAdminProvidersRoute,
+  AuthenticatedAdminReadinessRoute: AuthenticatedAdminReadinessRoute,
+  AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
+  AuthenticatedAdminResearchLabRoute: AuthenticatedAdminResearchLabRoute,
+  AuthenticatedAdminStagingValidationRoute:
+    AuthenticatedAdminStagingValidationRoute,
+  AuthenticatedAdminSystemStatusRoute: AuthenticatedAdminSystemStatusRoute,
+  AuthenticatedAdminTradingviewRoute: AuthenticatedAdminTradingviewRoute,
+  AuthenticatedAdminWidgetsRoute: AuthenticatedAdminWidgetsRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedResearchLabRunsRouteChildren {
   AuthenticatedResearchLabRunsRunIdRoute: typeof AuthenticatedResearchLabRunsRunIdRoute
 }
@@ -1706,6 +1772,7 @@ const AuthenticatedResearchLabRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedAiMarketAssistantRoute: typeof AuthenticatedAiMarketAssistantRoute
   AuthenticatedAlertsRoute: typeof AuthenticatedAlertsRoute
   AuthenticatedBacktestLabRoute: typeof AuthenticatedBacktestLabRoute
@@ -1724,26 +1791,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSignalHistoryRoute: typeof AuthenticatedSignalHistoryRoute
   AuthenticatedStrategyAnalyticsRoute: typeof AuthenticatedStrategyAnalyticsRoute
   AuthenticatedTelegramLogRoute: typeof AuthenticatedTelegramLogRoute
-  AuthenticatedAdminAlertsRoute: typeof AuthenticatedAdminAlertsRoute
-  AuthenticatedAdminBetaReadinessRoute: typeof AuthenticatedAdminBetaReadinessRoute
-  AuthenticatedAdminCoindcxRoute: typeof AuthenticatedAdminCoindcxRoute
-  AuthenticatedAdminGannGapRoute: typeof AuthenticatedAdminGannGapRoute
-  AuthenticatedAdminInstitutionalFlowRoute: typeof AuthenticatedAdminInstitutionalFlowRoute
-  AuthenticatedAdminLaunchReadinessRoute: typeof AuthenticatedAdminLaunchReadinessRoute
-  AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
-  AuthenticatedAdminProviderHealthRoute: typeof AuthenticatedAdminProviderHealthRoute
-  AuthenticatedAdminProviderSettingsRoute: typeof AuthenticatedAdminProviderSettingsRoute
-  AuthenticatedAdminProvidersRoute: typeof AuthenticatedAdminProvidersRoute
-  AuthenticatedAdminReadinessRoute: typeof AuthenticatedAdminReadinessRoute
-  AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
-  AuthenticatedAdminResearchLabRoute: typeof AuthenticatedAdminResearchLabRoute
-  AuthenticatedAdminStagingValidationRoute: typeof AuthenticatedAdminStagingValidationRoute
-  AuthenticatedAdminSystemStatusRoute: typeof AuthenticatedAdminSystemStatusRoute
-  AuthenticatedAdminTradingviewRoute: typeof AuthenticatedAdminTradingviewRoute
-  AuthenticatedAdminWidgetsRoute: typeof AuthenticatedAdminWidgetsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedAiMarketAssistantRoute: AuthenticatedAiMarketAssistantRoute,
   AuthenticatedAlertsRoute: AuthenticatedAlertsRoute,
   AuthenticatedBacktestLabRoute: AuthenticatedBacktestLabRoute,
@@ -1764,27 +1815,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSignalHistoryRoute: AuthenticatedSignalHistoryRoute,
   AuthenticatedStrategyAnalyticsRoute: AuthenticatedStrategyAnalyticsRoute,
   AuthenticatedTelegramLogRoute: AuthenticatedTelegramLogRoute,
-  AuthenticatedAdminAlertsRoute: AuthenticatedAdminAlertsRoute,
-  AuthenticatedAdminBetaReadinessRoute: AuthenticatedAdminBetaReadinessRoute,
-  AuthenticatedAdminCoindcxRoute: AuthenticatedAdminCoindcxRoute,
-  AuthenticatedAdminGannGapRoute: AuthenticatedAdminGannGapRoute,
-  AuthenticatedAdminInstitutionalFlowRoute:
-    AuthenticatedAdminInstitutionalFlowRoute,
-  AuthenticatedAdminLaunchReadinessRoute:
-    AuthenticatedAdminLaunchReadinessRoute,
-  AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
-  AuthenticatedAdminProviderHealthRoute: AuthenticatedAdminProviderHealthRoute,
-  AuthenticatedAdminProviderSettingsRoute:
-    AuthenticatedAdminProviderSettingsRoute,
-  AuthenticatedAdminProvidersRoute: AuthenticatedAdminProvidersRoute,
-  AuthenticatedAdminReadinessRoute: AuthenticatedAdminReadinessRoute,
-  AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
-  AuthenticatedAdminResearchLabRoute: AuthenticatedAdminResearchLabRoute,
-  AuthenticatedAdminStagingValidationRoute:
-    AuthenticatedAdminStagingValidationRoute,
-  AuthenticatedAdminSystemStatusRoute: AuthenticatedAdminSystemStatusRoute,
-  AuthenticatedAdminTradingviewRoute: AuthenticatedAdminTradingviewRoute,
-  AuthenticatedAdminWidgetsRoute: AuthenticatedAdminWidgetsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -78,10 +78,9 @@ export function NotificationBell() {
 
   const count = countData?.count ?? 0;
 
-  if (!signedIn) return null;
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !signedIn) return;
     function handle(e: MouseEvent) {
       if (!wrapRef.current) return;
       if (!wrapRef.current.contains(e.target as Node)) setOpen(false);
@@ -95,7 +94,8 @@ export function NotificationBell() {
       document.removeEventListener("mousedown", handle);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [open, signedIn]);
+  if (!signedIn) return null;
 
   return (
     <div ref={wrapRef} className="relative">
