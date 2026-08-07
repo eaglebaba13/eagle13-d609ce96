@@ -121,6 +121,7 @@ function envOf(cfg: UpstoxHttpConfig): TokenPolicyEnv {
     UPSTOX_API_KEY: p.UPSTOX_API_KEY,
     UPSTOX_API_SECRET: p.UPSTOX_API_SECRET,
     UPSTOX_ACCESS_TOKEN: p.UPSTOX_ACCESS_TOKEN,
+    UPSTOX_ANALYTICS_TOKEN: p.UPSTOX_ANALYTICS_TOKEN,
     UPSTOX_SANDBOX_ACCESS_TOKEN: p.UPSTOX_SANDBOX_ACCESS_TOKEN,
   };
 }
@@ -186,10 +187,18 @@ export class UpstoxHttpClient {
       return { token: null, status: resolved.failureReason ?? resolved.status, source: resolved.source };
     }
 
-    if (this.useInjectedEnv) {
+    const analyticsToken = this.env.UPSTOX_ANALYTICS_TOKEN?.trim();
+if (analyticsToken) {
+  return {
+    token: analyticsToken,
+    status: "READY",
+    source: "ENV_ANALYTICS",
+  };
+}
+if (this.useInjectedEnv) {
       const status = evaluateUpstoxTokenPolicy(this.env);
       return {
-        token: status.tokenUsable ? this.env.UPSTOX_ACCESS_TOKEN ?? null : null,
+        token: status.tokenUsable ? (this.env.UPSTOX_ANALYTICS_TOKEN?.trim() || this.env.UPSTOX_ACCESS_TOKEN?.trim() || null) : null,
         status: status.reason,
         source: "ENV",
       };
